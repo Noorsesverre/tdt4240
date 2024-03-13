@@ -10,6 +10,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setTitle("Shipocalypse");
+		config.setWindowedMode(Shipocalypse.GAME_WIDTH, Shipocalypse.GAME_HEIGHT);
 		new Lwjgl3Application(new Shipocalypse(), config);
 	}
 }
