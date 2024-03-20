@@ -14,11 +14,12 @@ public class BoatButton extends Button {
 
     private Texture _texture;
 
-    private Boat hoverBoat;
+    public int boat_size;
 
-    public BoatButton(ShapeRenderer shape, int x, int y, Texture texture) {
+    public BoatButton(ShapeRenderer shape, int x, int y, Texture texture, int boat_size) {
         super(shape, x, y);
         _texture = texture;
+        this.boat_size = boat_size;
     }
 
     public void render(SpriteBatch batch) {
@@ -34,30 +35,15 @@ public class BoatButton extends Button {
         BitmapFont bf = new BitmapFont();
 
         bf.draw(batch, "0", get_position().x + _texture.getWidth() / 2, get_position().y);
+    }
 
-        if (hoverBoat != null) {
-            hoverBoat.render(batch);
-        }
-
-
+    public Texture get_texture() {
+        return _texture;
     }
 
     @Override
     public void handleInput() {
-        if (Gdx.input.isTouched()) {
 
-            int input_x = Gdx.input.getX();
-            int input_y = Shipocalypse.GAME_HEIGHT - Gdx.input.getY();
-
-            Rectangle touch_rectangle = new Rectangle(input_x - 2, input_y - 2, 4, 4);
-
-            if (touch_rectangle.overlaps(this.get_rectangle())) {
-                System.out.print("click");
-                hoverBoat = new Boat(input_x, input_y, 1);
-            }
-        } else {
-            hoverBoat = null;
-        }
     }
 
     @Override
