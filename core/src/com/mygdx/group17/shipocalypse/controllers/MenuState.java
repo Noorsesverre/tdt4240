@@ -1,4 +1,4 @@
-package com.mygdx.group17.shipocalypse.views;
+package com.mygdx.group17.shipocalypse.controllers;
 
 import static com.mygdx.group17.shipocalypse.Shipocalypse.GAME_HEIGHT;
 import static com.mygdx.group17.shipocalypse.Shipocalypse.GAME_WIDTH;

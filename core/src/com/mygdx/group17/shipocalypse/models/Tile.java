@@ -8,7 +8,6 @@ import org.w3c.dom.css.Rect;
 public class Tile {
 
     public static final int TILE_SIZE = 61;
-
     public int _posx;
     public int _posy;
 

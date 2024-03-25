@@ -7,14 +7,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.group17.shipocalypse.views.ConfigureState;
-import com.mygdx.group17.shipocalypse.views.MenuState;
-import com.mygdx.group17.shipocalypse.views.PlayState;
+import com.mygdx.group17.shipocalypse.controllers.ConfigureState;
 
 public class Shipocalypse extends ApplicationAdapter {
 
-	public static final int GAME_WIDTH = 820;
-	public static final int GAME_HEIGHT = 860;
+	public static final int GAME_WIDTH = 860;
+	public static final int GAME_HEIGHT = 820;
 	SpriteBatch batch;
 	Texture ship;
 	Texture sea;

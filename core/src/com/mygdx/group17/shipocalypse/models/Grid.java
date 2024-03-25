@@ -1,6 +1,7 @@
 package com.mygdx.group17.shipocalypse.models;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.group17.shipocalypse.Shipocalypse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,12 +12,18 @@ public class Grid {
 
     private Tile[][] _tiles;
 
-    public static final int GRID_POS_X = 200;
-    public static final int GRID_POS_Y = 100;
+    public int GRID_POS_X;
+    public int GRID_POS_Y;
     public static final int GRID_GAP = 5;
+    public static final int x_center = Shipocalypse.GAME_WIDTH / 2;
+    public static final int y_center = Shipocalypse.GAME_HEIGHT / 2;
+
 
 
     public Grid(int sizeX, int sizeY) {
+        GRID_POS_X = x_center - (sizeX * Tile.TILE_SIZE / 2);
+        GRID_POS_Y = y_center - (sizeY * Tile.TILE_SIZE / 2);
+
         _tiles = new Tile[sizeX][sizeY];
 
         for (int x = 0; x < sizeX; x++ )  {

@@ -13,13 +13,15 @@ import com.mygdx.group17.shipocalypse.models.Boat;
 public class BoatButton extends Button {
 
     private Texture _texture;
-
+    public int max_allowed_boats;
     public int boat_size;
+    public boolean isVertical = false;
 
-    public BoatButton(ShapeRenderer shape, int x, int y, Texture texture, int boat_size) {
+    public BoatButton(ShapeRenderer shape, int x, int y, int boat_size, int max_allowed_boats) {
         super(shape, x, y);
-        _texture = texture;
+        _texture = new Texture("ship" + boat_size + ".png");
         this.boat_size = boat_size;
+        this.max_allowed_boats = max_allowed_boats;
     }
 
     public void render(SpriteBatch batch) {
@@ -34,7 +36,7 @@ public class BoatButton extends Button {
 
         BitmapFont bf = new BitmapFont();
 
-        bf.draw(batch, "0", get_position().x + _texture.getWidth() / 2, get_position().y);
+        bf.draw(batch, String.valueOf(max_allowed_boats), get_position().x + _texture.getWidth() / 2, get_position().y);
     }
 
     public Texture get_texture() {
@@ -49,5 +51,11 @@ public class BoatButton extends Button {
     @Override
     public void dispose() {
 
+    }
+
+    public boolean getNextOrientation() {
+        this.isVertical = !this.isVertical;
+
+        return this.isVertical;
     }
 }

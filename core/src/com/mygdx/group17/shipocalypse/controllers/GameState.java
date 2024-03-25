@@ -1,4 +1,4 @@
-package com.mygdx.group17.shipocalypse.views;
+package com.mygdx.group17.shipocalypse.controllers;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 

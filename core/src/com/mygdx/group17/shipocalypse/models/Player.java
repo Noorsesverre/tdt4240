@@ -19,15 +19,6 @@ public class Player {
         return grid;
     }
 
-    public void update_boatconfig(int posX, int posY, int boatId) {
-
-        // get boat
-
-        // position boat
-
-
-    }
-
     public void select_target(int x, int y) {
 
         // add some checks to see if target is valid

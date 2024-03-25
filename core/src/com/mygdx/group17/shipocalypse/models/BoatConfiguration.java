@@ -3,6 +3,7 @@ package com.mygdx.group17.shipocalypse.models;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 
 public class BoatConfiguration {
@@ -14,12 +15,6 @@ public class BoatConfiguration {
     }
 
     public void AddBoat(int pos_x, int pos_y, int boat_size) {
-        /*
-            TODO: Create checks of previous boats
-            so that they don't overlap and are "near" each other.
-            Near each other, atleast one tile between, no diagonal allowed
-        */
-
         boats.add(new Boat(pos_x, pos_y, boat_size));
     }
 
