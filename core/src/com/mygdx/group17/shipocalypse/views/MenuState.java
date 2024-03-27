@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.group17.shipocalypse.models.Action;
 import com.mygdx.group17.shipocalypse.ui.MenuButton;
 
-public class MenuState extends GameState {
+
+public class MenuState extends GameState
+{
 
     private Texture title;
 
@@ -24,7 +26,7 @@ public class MenuState extends GameState {
 
         this.host_button = new MenuButton(shaperenderer, (int)buttonGameCenter, 500, "join game", Action.joinGame);
         this.join_button = new MenuButton(shaperenderer, (int)buttonGameCenter, 400, "host game", Action.hostGame);
-        this.exit_button = new MenuButton(shaperenderer, (int)buttonGameCenter, 300, "exit", Action.exit);
+        this.exit_button = new MenuButton(shaperenderer, (int)buttonGameCenter, 200, "exit", Action.exit);
     }
 
     @Override
@@ -53,4 +55,21 @@ public class MenuState extends GameState {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
