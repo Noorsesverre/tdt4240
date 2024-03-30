@@ -2,14 +2,12 @@ package com.mygdx.group17.shipocalypse.controllers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.mygdx.group17.shipocalypse.Shipocalypse;
 import com.mygdx.group17.shipocalypse.models.*;
 import com.mygdx.group17.shipocalypse.ui.BoatButton;
+import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,14 +28,9 @@ public class ConfigureState extends GameState {
     public boolean touching; // Used to avoid triggering a clause too often.
     public ShapeRenderer shaperenderer;
 
-    public ConfigureState() {
+    public ConfigureState(Gameconfig configuration) {
         shaperenderer = new ShapeRenderer();
-
-        gameconfig = new Gameconfig(10 ,10,
-            new HashMap<Integer, Integer>() {
-                {put(1, 1); put(2,1); put(3,1); put(4,1); }
-            }
-        );
+        gameconfig = configuration;
 
         _player = new Player(gameconfig.getGrid_x(), gameconfig.getGrid_y());
 
@@ -65,7 +58,7 @@ public class ConfigureState extends GameState {
     }
 
     @Override
-    public void render(SpriteBatch batch) {
+    public void render() {
         for (Tile[] list : _player.get_grid().get_tiles()) {
             for (Tile tile : list) {
                 shaperenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -81,22 +74,22 @@ public class ConfigureState extends GameState {
             }
         }
 
-        batch.begin();
+        AssetManager.batch.begin();
 
         for (BoatButton boatBtn : boatButtonList) {
-            boatBtn.render(batch);
+            boatBtn.render(AssetManager.batch);
         }
 
         if (hoverBoat != null) {
-            hoverBoat.render(batch);
+            hoverBoat.render(AssetManager.batch);
         }
 
         for (Boat boat : boatConfiguration.boats) {
-            boat.render(batch);
+            boat.render(AssetManager.batch);
         }
 
 
-        batch.end();
+        AssetManager.batch.end();
     }
 
     @Override

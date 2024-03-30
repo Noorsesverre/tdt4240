@@ -1,9 +1,7 @@
 package com.mygdx.group17.shipocalypse.models;
 
-import com.badlogic.gdx.graphics.Texture;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.List;
 
 public class BoatConfiguration {

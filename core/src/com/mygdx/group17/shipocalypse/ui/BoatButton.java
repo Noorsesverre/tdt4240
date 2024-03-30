@@ -1,14 +1,10 @@
 package com.mygdx.group17.shipocalypse.ui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
-import com.mygdx.group17.shipocalypse.Shipocalypse;
-import com.mygdx.group17.shipocalypse.models.Boat;
 
 public class BoatButton extends Button {
 
@@ -44,8 +40,8 @@ public class BoatButton extends Button {
     }
 
     @Override
-    public void handleInput() {
-
+    public boolean handleInput() {
+        return false;
     }
 
     @Override
