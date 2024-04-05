@@ -1,19 +1,16 @@
 package com.mygdx.group17.shipocalypse.models;
 
-import com.mygdx.group17.shipocalypse.Shipocalypse;
+import com.mygdx.group17.shipocalypse.models.Options;
 
 
 public class Grid {
 
     private Tile[][] _tiles;
-
     public int GRID_POS_X;
     public int GRID_POS_Y;
     public static final int GRID_GAP = 5;
-    public static final int x_center = Shipocalypse.GAME_WIDTH / 2;
-    public static final int y_center = Shipocalypse.GAME_HEIGHT / 2;
-
-
+    public static final int x_center = Options.GAME_WIDTH / 2;
+    public static final int y_center = Options.GAME_HEIGHT / 2;
 
     public Grid(int sizeX, int sizeY) {
         GRID_POS_X = x_center - (sizeX * Tile.TILE_SIZE / 2);
@@ -38,4 +35,6 @@ public class Grid {
     public Tile[][] get_tiles() {
         return _tiles;
     }
+
+
 }

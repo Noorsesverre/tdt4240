@@ -7,10 +7,6 @@ import com.mygdx.group17.shipocalypse.models.State;
 
 public class Shipocalypse extends ApplicationAdapter {
 
-
-	public static final int GAME_WIDTH = 840;
-	public static final int GAME_HEIGHT = 879;
-
 	GameManager gameManager;
 
 	@Override

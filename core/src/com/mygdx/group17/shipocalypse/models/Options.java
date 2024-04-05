@@ -1,10 +1,18 @@
 package com.mygdx.group17.shipocalypse.models;
 
+import com.badlogic.gdx.graphics.Color;
+
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Options {
+
+    public static final int GAME_WIDTH = 1080;
+    public static final int GAME_HEIGHT = 1920;
+
+    public static final Color[] BG_COLOR = new Color[] {Color.CYAN, Color.WHITE};
+
     public static HashMap<String, HashMap<String, Object>> options = new HashMap<String, HashMap<String, Object>>() {
         {
             put("grids", new HashMap<String, Object>() {

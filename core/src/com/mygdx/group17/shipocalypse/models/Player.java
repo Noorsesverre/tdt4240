@@ -2,11 +2,13 @@ package com.mygdx.group17.shipocalypse.models;
 
 
 import java.util.Dictionary;
+import com.mygdx.group17.shipocalypse.models.BoatConfiguration;
 
 public class Player {
 
     private Grid grid;
-    private Dictionary<String, Integer> _boatConfig;
+
+    private BoatConfiguration boat_configuration;
     private Tile current_target;
 
     public Player(int gridSizeX, int gridSizeY) {
@@ -24,6 +26,14 @@ public class Player {
     }
 
     public void fire() {
-
     }
+
+    public void setBoatConfig(BoatConfiguration boatconfig) {
+        boat_configuration = boatconfig;
+    }
+
+    public BoatConfiguration getBoatConfig() {
+        return boat_configuration;
+    }
+
 }

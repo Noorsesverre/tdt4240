@@ -6,5 +6,6 @@ public enum Action {
     exit,
     selectOption,
     createGame,
+    readyGame,
     test
 }

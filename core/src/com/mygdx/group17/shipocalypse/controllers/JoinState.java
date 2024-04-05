@@ -1,7 +1,5 @@
 package com.mygdx.group17.shipocalypse.controllers;
 
-import static com.mygdx.group17.shipocalypse.Shipocalypse.GAME_HEIGHT;
-import static com.mygdx.group17.shipocalypse.Shipocalypse.GAME_WIDTH;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -22,7 +20,7 @@ public class JoinState extends GameState {
         this.title = new Texture("title.png");
         this.shapeRenderer = AssetManager.getInstance().shape;
 
-        float buttonGameCenter = GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
+        float buttonGameCenter = Options.GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
 
         this.grid_selector = new Selector();
         this.grid_selector.setItems(Options.options.get("grid"));
@@ -35,7 +33,7 @@ public class JoinState extends GameState {
     @Override
     public void render() {
         AssetManager.batch.begin();
-        AssetManager.batch.draw(title, 300, GAME_HEIGHT - 200);
+        AssetManager.batch.draw(title, 300, Options.GAME_HEIGHT - 200);
         AssetManager.batch.end();
 
         start_button.render(AssetManager.batch);

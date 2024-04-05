@@ -1,43 +1,27 @@
 package com.mygdx.group17.shipocalypse.controllers;
 
-import static com.mygdx.group17.shipocalypse.Shipocalypse.GAME_HEIGHT;
-import static com.mygdx.group17.shipocalypse.Shipocalypse.GAME_WIDTH;
-
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.Timer.Task;
-
 import com.mygdx.group17.shipocalypse.models.Action;
-import com.mygdx.group17.shipocalypse.ui.MenuButton;
+import com.mygdx.group17.shipocalypse.models.Options;
 
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
+import com.mygdx.group17.shipocalypse.ui.MenuButton;
+
 public class MenuState extends GameState {
-    private Texture title;
-    private MenuButton host_button;
-    private MenuButton join_button;
-    private MenuButton exit_button;
-    private ShapeRenderer shapeRenderer;
+    private final MenuButton host_button;
+    private final MenuButton join_button;
+    private final MenuButton exit_button;
 
     public MenuState() {
-
-        this.title = new Texture("title.png");
-        this.shapeRenderer = AssetManager.getInstance().shape;
-        float buttonGameCenter = GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
-        this.host_button = new MenuButton(shapeRenderer, (int)buttonGameCenter, 500, "host game", Action.hostGame);
-        this.join_button = new MenuButton(shapeRenderer, (int)buttonGameCenter, 400, "join game", Action.joinGame);
-        this.exit_button = new MenuButton(shapeRenderer, (int)buttonGameCenter, 300, "exit", Action.exit);
+        float buttonGameCenter = Options.GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
+        this.host_button = new MenuButton(AssetManager.shape, (int)buttonGameCenter, 500, "host game", Action.hostGame);
+        this.join_button = new MenuButton(AssetManager.shape, (int)buttonGameCenter, 400, "join game", Action.joinGame);
+        this.exit_button = new MenuButton(AssetManager.shape, (int)buttonGameCenter, 300, "exit", Action.exit);
     }
 
     @Override
     public void render() {
-        AssetManager.batch.begin();
-        AssetManager.batch.draw(title, 300, GAME_HEIGHT - 200);
-        AssetManager.batch.end();
+        AssetManager.draw(AssetManager.title, 300, Options.GAME_HEIGHT - 200);
         host_button.render(AssetManager.batch);
         join_button.render(AssetManager.batch);
         exit_button.render(AssetManager.batch);

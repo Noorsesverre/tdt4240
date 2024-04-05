@@ -1,31 +1,36 @@
 package com.mygdx.group17.shipocalypse.singletons;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.group17.shipocalypse.Shipocalypse;
-import com.mygdx.group17.shipocalypse.models.Gameconfig;
-import com.mygdx.group17.shipocalypse.models.State;
-import com.mygdx.group17.shipocalypse.controllers.GameState;
-import com.mygdx.group17.shipocalypse.controllers.ConfigureState;
-import com.mygdx.group17.shipocalypse.controllers.MenuState;
-import com.mygdx.group17.shipocalypse.controllers.HostState;
-import com.mygdx.group17.shipocalypse.controllers.JoinState;
-import com.mygdx.group17.shipocalypse.controllers.PlayState;
-
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.ScreenUtils;
+
+import com.mygdx.group17.shipocalypse.models.*;
+import com.mygdx.group17.shipocalypse.controllers.*;
+import com.mygdx.group17.shipocalypse.Shipocalypse;
 
 public class GameManager {
     private static GameManager single_instance = null;
-    private static Shipocalypse shipocalypse;
     private static GameState playState;
+    private static GameConfig configuration;
+    private static Player player;
+    private static Player opponent;
+    private static boolean touching = false; // Used to avoid the same touch triggering twice.
 
     private GameManager(Shipocalypse _shipocalypse) {
-        shipocalypse = _shipocalypse;
         AssetManager.getInstance();
     }
 
+    public void setPlayer(Player _player) {
+        player = _player;
+    }
+    public void setOpponent(Player _opponent) { opponent = _opponent; }
+
     public static void init(Shipocalypse _shipocalypse) {
+        if (single_instance != null) {
+            throw new RuntimeException("GameManager already initialized");
+        }
         single_instance = new GameManager(_shipocalypse);
     }
 
@@ -53,27 +58,48 @@ public class GameManager {
                 playState = new PlayState();
                 break;
             default:
-                throw new RuntimeException("Kunne ikke finne action-type");
+                throw new RuntimeException("Couldn't find action-type");
         }
     }
 
     public static void createGame(int gridX, int gridY, Map<Integer, Integer> boats) {
-        Gameconfig config = new Gameconfig(gridX, gridY, boats);
+        GameConfig config = new GameConfig(gridX, gridY, boats);
         playState = new ConfigureState(config);
     }
-    public static void handleInput() {
-        playState.handleInput();
-    }
+    public static void handleInput() { playState.handleInput(); }
+
+    public GameState getState() { return playState; }
     public static void render() {
         ScreenUtils.clear(1, 0, 0, 1);
-        AssetManager.batch.begin();
-        AssetManager.batch.draw(AssetManager.sea, 0, 0);
-        AssetManager.bf.draw(AssetManager.batch, "Mouse location: {" + (Gdx.input.getX()) + ", " + (Shipocalypse.GAME_HEIGHT - Gdx.input.getY()) + "}", 15,20);
-        AssetManager.batch.end();
+        AssetManager.drawBackground();
 
-        playState.handleInput();
+        // Print debug info to screen
+        AssetManager.write("Mouse location: {" + (Gdx.input.getX()) + ", " + (Options.GAME_HEIGHT - Gdx.input.getY()) + "}", 15,20);
+        AssetManager.write("Touching: " + Boolean.toString(touching), 15,40);
+
+        // Ensures that a continuous touch will not be registered multiple times.
+        if (Gdx.input.isTouched()) {
+            touching = true;
+        }
+        else {
+            touching = false;
+        }
 
         playState.render();
     }
+
+    public static boolean isTouching() {
+        // Used throughout application to check for new touch.
+        return touching;
+    }
+
+    public static void setConfig(GameConfig config, Player pl, BoatConfiguration bc) {
+        player = pl;
+        pl.setBoatConfig(bc);
+        configuration = config;
+    }
+
+    public static Player getPlayer() { return player; }
+    public static GameConfig getConfig() { return configuration; }
 
 }

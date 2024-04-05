@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.ArrayList;
+
 public class Boat {
 
     public int _posx;
@@ -13,11 +15,25 @@ public class Boat {
     public boolean _isVertical = false;
     public Texture _texture;
 
+    private ArrayList<Tile> tiles;
+
     public Boat (int posx, int posy, int boatSize) {
         _posx = posx;
         _posy = posy;
         _boatSize = boatSize;
         _texture = FindCorrectTexture(boatSize);
+    }
+
+    public void addTiles(ArrayList<Tile> list) {
+        tiles = list;
+        for (Tile tile : tiles) {
+            tile.assign();
+        }
+    }
+
+    public void setPosition(int x, int y) {
+        _posx = x;
+        _posy = y;
     }
 
     public static Texture FindCorrectTexture(int boatSize) {
@@ -50,4 +66,21 @@ public class Boat {
         }
         return new Rectangle(_posx, _posy, _texture.getWidth(), _texture.getHeight());
     }
+
+    public Rectangle get_rectangle(int x, int y, boolean inversion, int origin) {
+        if (_isVertical ^ inversion) {
+            return new Rectangle(x, y - (Tile.TILE_SIZE*origin) - 5*(origin-1), _texture.getHeight(), _texture.getWidth());
+        }
+        return new Rectangle(x - (Tile.TILE_SIZE*origin) - 5*(origin-1), y, _texture.getWidth(), _texture.getHeight());
+    }
+
+    public int getSize() {
+        return _boatSize;
+    }
+
+    public ArrayList<Tile> getTiles() {
+
+        return tiles;
+    }
+
 }

@@ -1,20 +1,29 @@
 package com.mygdx.group17.shipocalypse.singletons;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.mygdx.group17.shipocalypse.models.Options;
 
 public class AssetManager {
     public static SpriteBatch batch;
-    public static Texture ship;
-    public static Texture sea;
+    public static ArrayList<Texture> ship_textures;
+    public static ArrayList<Sprite> ship_sprites;
+    public static Texture title;
     public static BitmapFont bf;
     public static ShapeRenderer shape;
+    public static ShapeRenderer bg_shape;
     public static Sprite sea_sprite;
     public static Skin skin;
     public static TextureAtlas atlas;
@@ -23,13 +32,17 @@ public class AssetManager {
     private AssetManager() {
         shape = new ShapeRenderer();
         batch = new SpriteBatch();
-        ship = new Texture("ship4.png");
-        sea = new Texture("sea.png");
+        title = new Texture("title.png");
         bf = new BitmapFont();
-        sea_sprite = new Sprite(sea);
         atlas = new TextureAtlas(Gdx.files.internal("uiskin.atlas"));
         skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+        ship_textures = new ArrayList(List.of(new Texture("ship1.png"), new Texture("ship2.png"), new Texture("ship3.png"), new Texture("ship4.png")));
+        ship_sprites = new ArrayList();
+        for (Texture ship : ship_textures) {
+            ship_sprites.add(new Sprite(ship));
+        }
     }
+
 
     public static synchronized AssetManager getInstance() {
         if (single_instance == null) {
@@ -38,11 +51,36 @@ public class AssetManager {
         return single_instance;
     }
 
+    public static void drawBackground() {
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.rect(0,0, Options.GAME_WIDTH, Options.GAME_HEIGHT, Options.BG_COLOR[0], Options.BG_COLOR[0], Options.BG_COLOR[1], Options.BG_COLOR[1]);
+        shape.end();
+    }
+
+    public static void draw(Texture drawable, int x, int y) {
+        batch.begin();
+        AssetManager.batch.draw(drawable, x, y);
+        batch.end();
+    }
+
+    public static void draw(Sprite drawable, int x, int y) {
+        batch.begin();
+        AssetManager.batch.draw(drawable, x, y);
+        batch.end();
+    }
+
+    public static void write(String text, int x, int y) {
+        batch.begin();
+        bf.draw(batch, text, x, y);
+        batch.end();
+    }
+
     public static void dispose() {
         shape.dispose();
         batch.dispose();
-        ship.dispose();
-        sea.dispose();
+        for (Texture ship : ship_textures) {
+            ship.dispose();
+        }
         bf.dispose();
     }
 

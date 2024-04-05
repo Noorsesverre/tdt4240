@@ -5,21 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.mygdx.group17.shipocalypse.Shipocalypse.GAME_HEIGHT;
-import static com.mygdx.group17.shipocalypse.Shipocalypse.GAME_WIDTH;
-
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import com.mygdx.group17.shipocalypse.models.Action;
-import com.mygdx.group17.shipocalypse.models.State;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 import com.mygdx.group17.shipocalypse.ui.MenuButton;
 import com.mygdx.group17.shipocalypse.models.Options;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
 
 public class HostState extends GameState {
-    private Texture title;
     private HashMap<String, HashMap> default_options = Options.defaults;
     private HashMap<String, Object> selected_options = new HashMap<String, Object>();
     private MenuButton start_button;
@@ -28,9 +22,8 @@ public class HostState extends GameState {
     private static HashMap<String, List<MenuButton>> options = new HashMap<String, List<MenuButton>>();
 
     public HostState() {
-        this.title = new Texture("title.png");
         this.shapeRenderer = AssetManager.getInstance().shape;
-        float buttonGameCenter = GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
+        float buttonGameCenter = Options.GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
         int y = 550;
 
         // Set up all option buttons
@@ -67,7 +60,7 @@ public class HostState extends GameState {
     @Override
     public void render() {
         AssetManager.batch.begin();
-        AssetManager.batch.draw(title, 300, GAME_HEIGHT - 200);
+        AssetManager.batch.draw(AssetManager.title, 300, Options.GAME_HEIGHT - 200);
         AssetManager.batch.end();
 
         //render all option buttons
@@ -97,16 +90,14 @@ public class HostState extends GameState {
                             select(s, b2);
                         }
                     }
-                break;
+                    break;
                 }
             }
         }
-
         if (start_button.handleInput()) {
-          System.out.println(selected_options);
-          GameManager.createGame((int)selected_options.get("grids"), (int)selected_options.get("grids"), (Map<Integer,Integer>)selected_options.get("boats"));
+            System.out.println(selected_options);
+            GameManager.createGame((int)selected_options.get("grids"), (int)selected_options.get("grids"), (Map<Integer,Integer>)selected_options.get("boats"));
         }
     }
-
 }
 

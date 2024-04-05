@@ -3,33 +3,33 @@ package com.mygdx.group17.shipocalypse.models;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Gameconfig {
-    private static int grid_x;
-    private static int grid_y;
+public class GameConfig {
+    private int grid_x;
+    private int grid_y;
 
     private static Map<Integer, Integer> allowed_boats;
 
-    public Gameconfig() {
+    public GameConfig() {
         allowed_boats = new HashMap<>();
     }
 
-    public Gameconfig(int x, int y) {
+    public GameConfig(int x, int y) {
         grid_x = x;
         grid_y = y;
         allowed_boats = new HashMap<>();
     }
 
-    public Gameconfig(int x, int y, Map<Integer, Integer> boats) {
+    public GameConfig(int x, int y, Map<Integer, Integer> boats) {
         grid_x = x;
         grid_y = y;
         allowed_boats = boats;
     }
 
-    public static void setGrid_x(int x) {
+    public void setGrid_x(int x) {
         grid_x = x;
     }
 
-    public static void setGrid_y(int y) {
+    public void setGrid_y(int y) {
         grid_y = y;
     }
 
@@ -48,11 +48,21 @@ public class Gameconfig {
         }
     }
 
-    public static int getGrid_x() {
+    public boolean allBoatsPlaced() {
+        boolean result = true;
+        for (Integer boat_type : allowed_boats.keySet()) {
+            if (allowed_boats.get(boat_type) != 0) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    public int getGrid_x() {
         return grid_x;
     }
 
-    public static int getGrid_y() {
+    public int getGrid_y() {
         return grid_y;
     }
 
