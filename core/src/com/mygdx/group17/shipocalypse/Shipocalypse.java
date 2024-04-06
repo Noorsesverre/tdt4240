@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.mygdx.group17.shipocalypse.ui.LoginScreen;
 import com.mygdx.group17.shipocalypse.views.ConfigureState;
 import com.mygdx.group17.shipocalypse.views.MenuState;
 import com.mygdx.group17.shipocalypse.views.PlayState;
@@ -25,6 +26,8 @@ public class Shipocalypse extends ApplicationAdapter {
 
 	ShapeRenderer shape;
 
+	LoginScreen loginScreen; // Your custom login screen class
+
 
 	@Override
 	public void create () {
@@ -36,11 +39,13 @@ public class Shipocalypse extends ApplicationAdapter {
 		playstate = new ConfigureState();
 
 		bf = new BitmapFont();
+
+		loginScreen = new LoginScreen(); // Initialize your login screen
 	}
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
+		/*ScreenUtils.clear(1, 0, 0, 1);
 		batch.begin();
 		batch.draw(sea, 0, 0);
 
@@ -50,7 +55,9 @@ public class Shipocalypse extends ApplicationAdapter {
 
 		playstate.handleInput();
 
-		playstate.render(batch);
+		playstate.render(batch);*/ //commented out to check the login screen
+
+		loginScreen.render(Gdx.graphics.getDeltaTime());
 	}
 	
 	@Override
