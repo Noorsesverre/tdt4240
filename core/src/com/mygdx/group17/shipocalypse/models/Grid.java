@@ -36,5 +36,7 @@ public class Grid {
         return _tiles;
     }
 
+    public int getSize() { return _tiles.length; }
+
 
 }

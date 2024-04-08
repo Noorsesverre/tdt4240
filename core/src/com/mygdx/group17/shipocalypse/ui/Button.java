@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.group17.shipocalypse.models.Action;
+import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
 public abstract class Button {
     private Vector3 _position;
@@ -41,13 +42,9 @@ public abstract class Button {
         _shaperenderer.rect(_position.x, _position.y, width, height);
         _shaperenderer.end();
 
-        BitmapFont bf = new BitmapFont();
-
         Vector3 text_pos = FindCenterPosition();
 
-        batch.begin();
-        bf.draw(batch, _text, _position.x + text_pos.x, _position.y + text_pos.y);
-        batch.end();
+        AssetManager.write(_text, (int)_position.x + (int)text_pos.x, (int)_position.y + (int)text_pos.y);
     }
     public void render(SpriteBatch batch, Color c) {
         _shaperenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -55,13 +52,9 @@ public abstract class Button {
         _shaperenderer.rect(_position.x, _position.y, width, height);
         _shaperenderer.end();
 
-        BitmapFont bf = new BitmapFont();
-
         Vector3 text_pos = FindCenterPosition();
 
-        batch.begin();
-        bf.draw(batch, _text, _position.x + text_pos.x, _position.y + text_pos.y);
-        batch.end();
+        AssetManager.write(_text, (int)_position.x + (int)text_pos.x, (int)_position.y + (int)text_pos.y);
     }
     private Vector3 FindCenterPosition() {
         int text_length = _text.length() * 8;

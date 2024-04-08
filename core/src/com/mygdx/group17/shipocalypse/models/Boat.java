@@ -4,8 +4,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Boat {
 
@@ -53,7 +55,7 @@ public class Boat {
             sprite.rotate(90);
         }
 
-        sprite.draw(batch);
+        AssetManager.draw(sprite);
     }
 
     public void turn_boat() {
@@ -81,6 +83,28 @@ public class Boat {
     public ArrayList<Tile> getTiles() {
 
         return tiles;
+    }
+
+    public void shiftDown() {
+        _posy = _posy - 400;
+    }
+    public void shiftUp() {
+        _posy = _posy + 400;
+    }
+
+
+    // For choosing random opponent positions...
+    public void move() {
+        double corr_x = Math.random() - 0.5;
+        double corr_y = Math.random() - 0.5;
+        corr_x = corr_x * 350;
+        corr_y = corr_y * 350;
+        _posx = _posx + (int) corr_x;
+        _posy = _posy + (int) corr_y;
+    }
+
+    public void hit(Tile tile) {
+        tile.setBurning();
     }
 
 }

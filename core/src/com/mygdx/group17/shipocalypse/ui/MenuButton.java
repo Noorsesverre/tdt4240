@@ -3,11 +3,13 @@ package com.mygdx.group17.shipocalypse.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.group17.shipocalypse.Shipocalypse;
 import com.mygdx.group17.shipocalypse.models.Action;
 import com.mygdx.group17.shipocalypse.models.Options;
 import com.badlogic.gdx.graphics.Color;
 
+import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
 import com.mygdx.group17.shipocalypse.models.State;
 
@@ -35,10 +37,11 @@ public class MenuButton extends Button{
     public boolean handleInput() {
 
         if (Gdx.input.isTouched() && !GameManager.isTouching()) {
-            int input_x = Gdx.input.getX();
-            int input_y = Options.GAME_HEIGHT - Gdx.input.getY();
 
-            Rectangle touch_rectangle = new Rectangle(input_x - 2, input_y - 2, 4, 4);
+            // Use viewport/AssetManager to unproject input coordinates to game world coordinates.
+            Vector3 input_vector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            Vector3 projected_vector = AssetManager.unprojectInput(input_vector);
+            Rectangle touch_rectangle = new Rectangle(projected_vector.x - 2, projected_vector.y - 2, 4, 4);
 
             if (touch_rectangle.overlaps(this.get_rectangle())) {
                 switch (this.get_action()) {

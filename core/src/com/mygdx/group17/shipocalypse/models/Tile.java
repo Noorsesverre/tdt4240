@@ -11,7 +11,9 @@ public class Tile {
     public int _index_x;
     public int _index_y;
     public boolean occupied;
-    private boolean selected;
+    public boolean selected;
+
+    public boolean burning;
 
     public Tile(int posx, int posy, int index_x, int index_y) {
         _posx = posx;
@@ -19,6 +21,7 @@ public class Tile {
         _index_y = index_y;
         _index_x = index_x;
         selected = false;
+        burning = false;
     }
 
     public Rectangle get_rectangle() {
@@ -32,6 +35,10 @@ public class Tile {
         result[0] = _index_x;
         result[1] = _index_y;
         return result;
+    }
+
+    public void setBurning() {
+        burning = true;
     }
 
     public boolean isOccupied() { return occupied; }
@@ -57,4 +64,11 @@ public class Tile {
         return selected;
     }
 
+
+    public void shiftDown() {
+        _posy = _posy - 400;
+    }
+    public void shiftUp() {
+        _posy = _posy + 400;
+    }
 }

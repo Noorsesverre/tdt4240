@@ -21,7 +21,7 @@ public class MenuState extends GameState {
 
     @Override
     public void render() {
-        AssetManager.draw(AssetManager.title, 300, Options.GAME_HEIGHT - 200);
+        AssetManager.draw(AssetManager.title, Options.GAME_WIDTH / 2 - AssetManager.title.getWidth() / 2, 200);
         host_button.render(AssetManager.batch);
         join_button.render(AssetManager.batch);
         exit_button.render(AssetManager.batch);

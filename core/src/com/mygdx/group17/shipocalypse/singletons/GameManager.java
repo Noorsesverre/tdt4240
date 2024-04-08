@@ -3,7 +3,9 @@ package com.mygdx.group17.shipocalypse.singletons;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import com.mygdx.group17.shipocalypse.models.*;
@@ -70,7 +72,7 @@ public class GameManager {
 
     public GameState getState() { return playState; }
     public static void render() {
-        ScreenUtils.clear(1, 0, 0, 1);
+        ScreenUtils.clear(0, 0, 0, 1);
         AssetManager.drawBackground();
 
         // Print debug info to screen
@@ -85,7 +87,19 @@ public class GameManager {
             touching = false;
         }
 
+        if (Gdx.input.isTouched()) {
+            Vector3 input_vector = AssetManager.unprojectInput(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            debugCursor(input_vector.x, input_vector.y, Color.GREEN);
+        }
+
         playState.render();
+    }
+
+    public static void debugCursor(float x, float y, Color color) {
+        AssetManager.shape.begin(ShapeRenderer.ShapeType.Filled);
+        AssetManager.shape.setColor(color);
+        AssetManager.shape.rect(x-5, y-5, 10, 10);
+        AssetManager.shape.end();
     }
 
     public static boolean isTouching() {
@@ -93,13 +107,16 @@ public class GameManager {
         return touching;
     }
 
-    public static void setConfig(GameConfig config, Player pl, BoatConfiguration bc) {
+    public static void setConfig(GameConfig config, Player pl, Player opp) {
         player = pl;
-        pl.setBoatConfig(bc);
+        opponent = opp;
         configuration = config;
     }
 
+    public static Player getOpponent() { return opponent; }
+
     public static Player getPlayer() { return player; }
     public static GameConfig getConfig() { return configuration; }
+
 
 }

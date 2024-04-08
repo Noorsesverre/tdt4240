@@ -11,8 +11,9 @@ public class Player {
     private BoatConfiguration boat_configuration;
     private Tile current_target;
 
-    public Player(int gridSizeX, int gridSizeY) {
+    public Player(int gridSizeX, int gridSizeY, BoatConfiguration boats) {
         grid = new Grid(gridSizeX, gridSizeY);
+        boat_configuration = boats;
     }
 
     public Grid get_grid() {
@@ -35,5 +36,10 @@ public class Player {
     public BoatConfiguration getBoatConfig() {
         return boat_configuration;
     }
+
+    public int getGridSize() {
+        return grid.getSize();
+    }
+
 
 }

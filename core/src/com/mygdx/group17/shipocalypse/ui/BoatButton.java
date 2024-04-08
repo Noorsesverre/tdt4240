@@ -25,9 +25,10 @@ public class BoatButton extends Button {
     public void render() {
         sprite.setScale(0.5f, 0.5f);
         sprite.setPosition(get_position().x, get_position().y);
-        sprite.draw(AssetManager.batch);
+        AssetManager.draw(sprite);
         BitmapFont bf = new BitmapFont();
-        bf.draw(AssetManager.batch, String.valueOf(max_allowed_boats), get_position().x + texture.getWidth() / 2, get_position().y);
+        //bf.draw(AssetManager.batch, String.valueOf(max_allowed_boats), get_position().x + texture.getWidth() / 2, get_position().y);
+        AssetManager.write(String.valueOf(max_allowed_boats), (int)get_position().x + texture.getWidth() / 2, (int)get_position().y);
     }
 
     public Texture getTexture() {

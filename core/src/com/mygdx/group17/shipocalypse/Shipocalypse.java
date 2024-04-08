@@ -1,30 +1,37 @@
 package com.mygdx.group17.shipocalypse;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import com.mygdx.group17.shipocalypse.singletons.GameManager;
+import com.mygdx.group17.shipocalypse.models.Options;
+import com.mygdx.group17.shipocalypse.singletons.*;
 import com.mygdx.group17.shipocalypse.models.State;
 
 public class Shipocalypse extends ApplicationAdapter {
-
-	GameManager gameManager;
+	private FitViewport viewport;
+	private Stage stage;
 
 	@Override
 	public void create () {
-
+		viewport = new FitViewport(Options.GAME_WIDTH, Options.GAME_HEIGHT);
 		GameManager.init(this);
 		GameManager.setState(State.menu);
-
+		AssetManager.setViewport(viewport);
 	}
 
 	@Override
 	public void render () {
-
 		GameManager.handleInput();
 		GameManager.render();
-
 	}
-	
+
+	@Override
+	public void resize(int width, int height) {
+		viewport.update(width, height);
+	}
 	@Override
 	public void dispose () {
 
