@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.group17.shipocalypse.views.AcountState;
-import com.mygdx.group17.shipocalypse.views.ConfigureState;
-import com.mygdx.group17.shipocalypse.views.MenuState;
-import com.mygdx.group17.shipocalypse.views.PlayState;
+import com.mygdx.group17.shipocalypse.views.AccountState;
 
 public class Shipocalypse extends ApplicationAdapter {
 
@@ -20,7 +17,7 @@ public class Shipocalypse extends ApplicationAdapter {
 	Texture ship;
 	Texture sea;
 
-	AcountState playstate;
+	AccountState playstate;
 
 	BitmapFont bf;
 
@@ -34,7 +31,7 @@ public class Shipocalypse extends ApplicationAdapter {
 		ship = new Texture("ship4.png");
 		sea = new Texture("sea.png");
 
-		playstate = new AcountState(shape);
+		playstate = new AccountState(shape);
 
 		bf = new BitmapFont();
 	}
