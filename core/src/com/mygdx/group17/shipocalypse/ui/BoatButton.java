@@ -1,67 +1,68 @@
 package com.mygdx.group17.shipocalypse.ui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.mygdx.group17.shipocalypse.Shipocalypse;
-import com.mygdx.group17.shipocalypse.models.Boat;
+import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
 public class BoatButton extends Button {
 
-    private Texture _texture;
+    private int max_allowed_boats;
+    private int boat_size;
+    private int x;
+    private int y;
+    private boolean isVertical = false;
+    private Texture texture;
+    private Sprite sprite;
 
-    private Boat hoverBoat;
-
-    public BoatButton(ShapeRenderer shape, int x, int y, Texture texture) {
+    public BoatButton(ShapeRenderer shape, int x, int y, int boat_size, int max_allowed_boats) {
         super(shape, x, y);
-        _texture = texture;
+        this.x = x;
+        this.y = y;
+        this.boat_size = boat_size;
+        this.max_allowed_boats = max_allowed_boats;
+        this.texture = AssetManager.ship_textures.get(this.boat_size - 1);
+        this.sprite = AssetManager.ship_sprites.get(this.boat_size - 1);
     }
 
-    public void render(SpriteBatch batch) {
-
-        Sprite icon = new Sprite(_texture);
-
-        icon.setScale(0.5f, 0.5f);
-
-        icon.setPosition(get_position().x, get_position().y);
-
-        icon.draw(batch);
-
+    public void render() {
+        sprite.setScale(0.5f, 0.5f);
+        sprite.setPosition(get_position().x, get_position().y);
+        AssetManager.draw(sprite);
         BitmapFont bf = new BitmapFont();
-
-        bf.draw(batch, "0", get_position().x + _texture.getWidth() / 2, get_position().y);
-
-        if (hoverBoat != null) {
-            hoverBoat.render(batch);
-        }
-
-
+        AssetManager.write(String.valueOf(max_allowed_boats), (int)get_position().x + texture.getWidth() / 2, (int)get_position().y);
     }
 
     @Override
-    public void handleInput() {
-        if (Gdx.input.isTouched()) {
+    public Rectangle get_rectangle() {
+        return new Rectangle(x, y, texture.getWidth(), texture.getHeight());
+    }
 
-            int input_x = Gdx.input.getX();
-            int input_y = Shipocalypse.GAME_HEIGHT - Gdx.input.getY();
+    public Texture getTexture() {
+        return texture;
+    }
 
-            Rectangle touch_rectangle = new Rectangle(input_x - 2, input_y - 2, 4, 4);
+    public int getSize() {
+        return boat_size;
+    }
 
-            if (touch_rectangle.overlaps(this.get_rectangle())) {
-                System.out.print("click");
-                hoverBoat = new Boat(input_x, input_y, 1);
-            }
-        } else {
-            hoverBoat = null;
-        }
+    @Override
+    public boolean handleInput() {
+        return false;
     }
 
     @Override
     public void dispose() {
+        texture.dispose();
+    }
+    public boolean getNextOrientation() {
+        this.isVertical = !this.isVertical;
+        return this.isVertical;
+    }
 
+    public int getAllowedBoats() {
+        return max_allowed_boats;
     }
 }

@@ -1,13 +1,13 @@
 package com.mygdx.group17.shipocalypse.ui;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.group17.shipocalypse.models.Action;
+import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
 public abstract class Button {
     private Vector3 _position;
@@ -17,11 +17,14 @@ public abstract class Button {
     private String _text;
     private Action _action;
 
+    Color color = Color.RED;
+
     public Button(ShapeRenderer shape, int x, int y) {
         width = 150;
         height = 75;
         _position = new Vector3(x, y, 0);
         _shaperenderer = shape;
+        this.color = Color.RED;
     }
 
     public Button(ShapeRenderer shape, int x, int y, String text, Action action) {
@@ -35,21 +38,24 @@ public abstract class Button {
 
     public void render(SpriteBatch batch) {
         _shaperenderer.begin(ShapeRenderer.ShapeType.Filled);
+        _shaperenderer.setColor(color);
         _shaperenderer.rect(_position.x, _position.y, width, height);
-        _shaperenderer.setColor(Color.RED);
         _shaperenderer.end();
-
-        BitmapFont bf = new BitmapFont();
 
         Vector3 text_pos = FindCenterPosition();
 
-        batch.begin();
-        bf.draw(batch, _text, _position.x + text_pos.x, _position.y + text_pos.y);
-        batch.end();
-
-
+        AssetManager.write(_text, (int)_position.x + (int)text_pos.x, (int)_position.y + (int)text_pos.y);
     }
+    public void render(SpriteBatch batch, Color c) {
+        _shaperenderer.begin(ShapeRenderer.ShapeType.Filled);
+        _shaperenderer.setColor(c);
+        _shaperenderer.rect(_position.x, _position.y, width, height);
+        _shaperenderer.end();
 
+        Vector3 text_pos = FindCenterPosition();
+
+        AssetManager.write(_text, (int)_position.x + (int)text_pos.x, (int)_position.y + (int)text_pos.y);
+    }
     private Vector3 FindCenterPosition() {
         int text_length = _text.length() * 8;
 
@@ -64,6 +70,7 @@ public abstract class Button {
         return new Rectangle(_position.x, _position.y, width, height);
     }
 
+
     public Action get_action () {
         return _action;
     }
@@ -75,7 +82,7 @@ public abstract class Button {
     public Vector3 get_position() {
         return _position;
     }
-    public abstract void handleInput();
+    public abstract boolean handleInput();
 
     public abstract void dispose();
 

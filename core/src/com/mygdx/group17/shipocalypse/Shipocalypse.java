@@ -2,60 +2,45 @@ package com.mygdx.group17.shipocalypse;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.group17.shipocalypse.views.ConfigureState;
-import com.mygdx.group17.shipocalypse.views.MenuState;
-import com.mygdx.group17.shipocalypse.views.PlayState;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import com.mygdx.group17.shipocalypse.models.Options;
+import com.mygdx.group17.shipocalypse.singletons.*;
+import com.mygdx.group17.shipocalypse.models.State;
 
 public class Shipocalypse extends ApplicationAdapter {
-
-	public static final int GAME_WIDTH = 820;
-	public static final int GAME_HEIGHT = 860;
-	SpriteBatch batch;
-	Texture ship;
-	Texture sea;
-
-	ConfigureState playstate;
-
-	BitmapFont bf;
-
-	ShapeRenderer shape;
-
+	OrthographicCamera camera;
+	private FitViewport viewport;
+	private Stage stage;
 
 	@Override
 	public void create () {
-		shape = new ShapeRenderer();
-		batch = new SpriteBatch();
-		ship = new Texture("ship4.png");
-		sea = new Texture("sea.png");
-
-		playstate = new ConfigureState();
-
-		bf = new BitmapFont();
+		camera = new OrthographicCamera();
+		camera.position.set(Options.GAME_WIDTH / 2f, Options.GAME_HEIGHT / 2f, 0);
+		camera.update();
+		viewport = new FitViewport(Options.GAME_WIDTH, Options.GAME_HEIGHT, camera);
+		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		GameManager.init(this);
+		GameManager.setState(State.menu);
+		AssetManager.setViewport(viewport);
 	}
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
-		batch.begin();
-		batch.draw(sea, 0, 0);
-
-
-		bf.draw(batch, "Mouse location: {" + (Gdx.input.getX()) + ", " + (Shipocalypse.GAME_HEIGHT - Gdx.input.getY()) + "}", 15,20);
-		batch.end();
-
-		playstate.handleInput();
-
-		playstate.render(batch);
+		GameManager.handleInput();
+		viewport.apply();
+		GameManager.render();
 	}
-	
+
+	@Override
+	public void resize(int width, int height) {
+		viewport.update(width, height);
+	}
 	@Override
 	public void dispose () {
-		batch.dispose();
-		sea.dispose();
+
 	}
 }

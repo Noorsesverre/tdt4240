@@ -1,22 +1,21 @@
 package com.mygdx.group17.shipocalypse.models;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.group17.shipocalypse.models.Options;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.List;
 
 public class Grid {
 
     private Tile[][] _tiles;
-
-    public static final int GRID_POS_X = 200;
-    public static final int GRID_POS_Y = 100;
-    public static final int GRID_GAP = 5;
-
+    public int GRID_POS_X;
+    public int GRID_POS_Y;
+    public static final int GRID_GAP = 2;
+    public static final int x_center = Options.GAME_WIDTH / 2;
+    public static final int y_center = Options.GAME_HEIGHT / 2;
 
     public Grid(int sizeX, int sizeY) {
+        GRID_POS_X = x_center - (sizeX * Tile.TILE_SIZE / 2);
+        GRID_POS_Y = y_center - (sizeY * Tile.TILE_SIZE / 2);
+
         _tiles = new Tile[sizeX][sizeY];
 
         for (int x = 0; x < sizeX; x++ )  {
@@ -31,9 +30,30 @@ public class Grid {
                 );
             }
         }
+        for (int x = 0; x < sizeX; x++) {
+            for (int y = 0; y < sizeY; y++) {
+                if (x - 1 >= 0) {
+                    _tiles[x][y].addAdjacentTile(_tiles[x-1][y]);
+                }
+                if (x + 1 < sizeX) {
+                    _tiles[x][y].addAdjacentTile(_tiles[x+1][y]);
+                }
+                if (y - 1 >= 0) {
+                    _tiles[x][y].addAdjacentTile(_tiles[x][y-1]);
+                }
+                if (y + 1 < sizeY) {
+                    _tiles[x][y].addAdjacentTile(_tiles[x][y+1]);
+                }
+            }
+        }
     }
 
     public Tile[][] get_tiles() {
         return _tiles;
     }
+
+
+    public int getSize() { return _tiles.length; }
+
+
 }
