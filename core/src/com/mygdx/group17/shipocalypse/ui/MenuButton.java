@@ -66,8 +66,11 @@ public class MenuButton extends Button{
                     case readyGame:
                         System.out.println("Game is being started");
                         break;
+                    case mainMenu:
+                        GameManager.setState(State.menu);
+                        break;
                     default:
-                        throw new RuntimeException("Kunne ikke finne action-type");
+                        throw new RuntimeException("Couldn't find action-type");
                 }
                 return true;
             }

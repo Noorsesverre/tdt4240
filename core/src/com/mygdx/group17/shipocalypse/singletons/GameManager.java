@@ -59,6 +59,9 @@ public class GameManager {
             case play:
                 playState = new PlayState();
                 break;
+            case gameEnd:
+                playState = new GameEndState(AssetManager.title);
+                break;
             default:
                 throw new RuntimeException("Couldn't find action-type");
         }
@@ -68,6 +71,7 @@ public class GameManager {
         GameConfig config = new GameConfig(gridX, gridY, boats);
         playState = new ConfigureState(config);
     }
+
     public static void handleInput() { playState.handleInput(); }
 
     public GameState getState() { return playState; }

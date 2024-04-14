@@ -5,7 +5,7 @@ import java.util.Dictionary;
 import com.mygdx.group17.shipocalypse.models.BoatConfiguration;
 
 public class Player {
-
+    private boolean defeated = false;
     private Grid grid;
 
     private BoatConfiguration boat_configuration;
@@ -26,7 +26,22 @@ public class Player {
 //        current_target = Grid[x][y];
     }
 
+    public void checkDefeat() {
+        boolean isDefeated = true;
+        for (Boat boat : boat_configuration.boats) {
+            if (!boat.isSunk()) {
+                isDefeated = false;
+                break;
+            }
+        }
+        defeated = isDefeated;
+    }
+
     public void fire() {
+    }
+
+    public boolean allShipsSunk() {
+        return defeated;
     }
 
     public void setBoatConfig(BoatConfiguration boatconfig) {

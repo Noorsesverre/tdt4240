@@ -1,5 +1,6 @@
 package com.mygdx.group17.shipocalypse.controllers;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import com.mygdx.group17.shipocalypse.models.Options;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
 
 public class HostState extends GameState {
-    private HashMap<String, HashMap> default_options = Options.defaults;
+    private LinkedHashMap<String, LinkedHashMap> default_options = Options.defaults;
     private HashMap<String, Object> selected_options = new HashMap<String, Object>();
     private MenuButton start_button;
     private ShapeRenderer shapeRenderer;
@@ -59,9 +60,7 @@ public class HostState extends GameState {
 
     @Override
     public void render() {
-        AssetManager.batch.begin();
-        AssetManager.batch.draw(AssetManager.title, 300, Options.GAME_HEIGHT - 200);
-        AssetManager.batch.end();
+        AssetManager.draw(AssetManager.title, Options.GAME_WIDTH / 2 - AssetManager.title.getWidth() / 2, 200);
 
         //render all option buttons
         for (List<MenuButton> l : options.values()) {

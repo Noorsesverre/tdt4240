@@ -8,7 +8,7 @@ public class Grid {
     private Tile[][] _tiles;
     public int GRID_POS_X;
     public int GRID_POS_Y;
-    public static final int GRID_GAP = 5;
+    public static final int GRID_GAP = 2;
     public static final int x_center = Options.GAME_WIDTH / 2;
     public static final int y_center = Options.GAME_HEIGHT / 2;
 
@@ -30,11 +30,28 @@ public class Grid {
                 );
             }
         }
+        for (int x = 0; x < sizeX; x++) {
+            for (int y = 0; y < sizeY; y++) {
+                if (x - 1 >= 0) {
+                    _tiles[x][y].addAdjacentTile(_tiles[x-1][y]);
+                }
+                if (x + 1 < sizeX) {
+                    _tiles[x][y].addAdjacentTile(_tiles[x+1][y]);
+                }
+                if (y - 1 >= 0) {
+                    _tiles[x][y].addAdjacentTile(_tiles[x][y-1]);
+                }
+                if (y + 1 < sizeY) {
+                    _tiles[x][y].addAdjacentTile(_tiles[x][y+1]);
+                }
+            }
+        }
     }
 
     public Tile[][] get_tiles() {
         return _tiles;
     }
+
 
     public int getSize() { return _tiles.length; }
 

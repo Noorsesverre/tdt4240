@@ -11,18 +11,23 @@ import java.util.Random;
 
 public class Boat {
 
+    public boolean display = false;
+
     public int _posx;
     public int _posy;
     public int _boatSize;
     public boolean _isVertical = false;
     public Texture _texture;
-
+    private boolean[] hits;
+    private boolean sunk;
     private ArrayList<Tile> tiles;
 
     public Boat (int posx, int posy, int boatSize) {
         _posx = posx;
         _posy = posy;
         _boatSize = boatSize;
+        hits = new boolean[_boatSize];
+        sunk = false;
         _texture = FindCorrectTexture(boatSize);
     }
 
@@ -43,7 +48,7 @@ public class Boat {
             throw new RuntimeException("Boat size needs to be in the range of 1-4");
         }
 
-        return new Texture("ship" + boatSize + ".png");
+        return new Texture("ship" + boatSize + "_small.png");
     }
 
     public void render(SpriteBatch batch) {
@@ -86,10 +91,10 @@ public class Boat {
     }
 
     public void shiftDown() {
-        _posy = _posy - 400;
+        _posy = _posy - 100;
     }
     public void shiftUp() {
-        _posy = _posy + 400;
+        _posy = _posy + 300;
     }
 
 
@@ -101,10 +106,44 @@ public class Boat {
         corr_y = corr_y * 350;
         _posx = _posx + (int) corr_x;
         _posy = _posy + (int) corr_y;
+        if (_posx < 0 || _posx > Options.GAME_WIDTH) {
+            _posx = Options.GAME_WIDTH / 2;
+        }
+        if (_posy < 0 || _posy > Options.GAME_HEIGHT) {
+            _posy = Options.GAME_HEIGHT / 2;
+        }
     }
 
+    public boolean isSunk() { return sunk; }
     public void hit(Tile tile) {
         tile.setBurning();
+        for (boolean hit : hits) {
+            System.out.println(hit);
+        }
+        hits[tiles.indexOf(tile)] = true;
+
+        for (boolean hit : hits) {
+            System.out.println(hit);
+        }
+        boolean is_sunk = true;
+        for (boolean hit : hits) {
+            if (!hit) {
+                is_sunk = false;
+                break;
+            }
+        }
+        sunk = is_sunk;
+    }
+
+    public boolean[] getHits() { return hits; }
+
+    public void show() {
+        display = true;
+        for (Tile tile : tiles) {
+            for (Tile adjacent_tile : tile.getAdjacentTiles()) {
+                adjacent_tile.hit();
+            }
+        }
     }
 
 }

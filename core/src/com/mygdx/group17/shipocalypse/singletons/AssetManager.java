@@ -29,8 +29,12 @@ public class AssetManager {
     public static BitmapFont bf;
     public static ShapeRenderer shape;
     public static Texture fire_texture;
-    public static ShapeRenderer bg_shape;
     public static Sprite fire_sprite;
+    public static Texture cross_texture;
+    public static Sprite cross_sprite;
+    public static Texture crosshair_texture;
+    public static Sprite crosshair_sprite;
+
     public static Skin skin;
     public static TextureAtlas atlas;
     private static AssetManager single_instance = null;
@@ -38,13 +42,17 @@ public class AssetManager {
     private AssetManager() {
         fire_texture = new Texture("fire.png");
         fire_sprite = new Sprite(fire_texture);
+        cross_texture = new Texture("cross.png");
+        cross_sprite = new Sprite(cross_texture);
+        crosshair_texture = new Texture("crosshair.png");
+        crosshair_sprite = new Sprite(crosshair_texture);
         shape = new ShapeRenderer();
         batch = new SpriteBatch();
         title = new Texture("title.png");
         bf = new BitmapFont();
         atlas = new TextureAtlas(Gdx.files.internal("uiskin.atlas"));
         skin = new Skin(Gdx.files.internal("skin.json"), atlas);
-        ship_textures = new ArrayList(List.of(new Texture("ship1.png"), new Texture("ship2.png"), new Texture("ship3.png"), new Texture("ship4.png")));
+        ship_textures = new ArrayList(List.of(new Texture("ship1_small.png"), new Texture("ship2_small.png"), new Texture("ship3_small.png"), new Texture("ship4_small.png")));
         ship_sprites = new ArrayList();
 
         for (Texture ship : ship_textures) {
@@ -99,13 +107,15 @@ public class AssetManager {
 
     public static void setViewport(FitViewport _viewport) {
         viewport = _viewport;
+        batch.setProjectionMatrix(viewport.getCamera().combined);
+        shape.setProjectionMatrix(viewport.getCamera().combined);
     }
 
 
     public static Vector3 unprojectInput(Vector3 vector) {
         // Method for projecting input to correct screen coordinates for the viewport.
         viewport.getCamera().unproject(vector, AssetManager.viewport.getScreenX(), AssetManager.viewport.getScreenY(), AssetManager.viewport.getScreenWidth(), AssetManager.viewport.getScreenHeight());
-        return new Vector3(vector.x + Options.GAME_WIDTH / 2, vector.y +  Options.GAME_HEIGHT / 2, 0);
+        return new Vector3(vector.x, vector.y, 0);
 
     }
 

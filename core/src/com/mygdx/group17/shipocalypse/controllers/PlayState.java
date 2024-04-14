@@ -7,23 +7,21 @@ import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.group17.shipocalypse.models.Action;
 import com.mygdx.group17.shipocalypse.models.Boat;
 import com.mygdx.group17.shipocalypse.models.Options;
+import com.mygdx.group17.shipocalypse.models.State;
 import com.mygdx.group17.shipocalypse.models.Tile;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
 import com.mygdx.group17.shipocalypse.ui.MenuButton;
 
 public class PlayState extends GameState {
-
     public static boolean selection = false;
-
     Tile selected_tile;
     public MenuButton fire_button;
-
     public PlayState() {
         float buttonGameCenter = Options.GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
         this.fire_button = new MenuButton(AssetManager.shape, (int)buttonGameCenter, 100, "fire", Action.test);
         this.selected_tile = new Tile(0, 0, 0, 0);
-
+        debug();
         // Change the y coordinate of player/opponent tiles to display both grids.
         for (Boat boat : GameManager.getOpponent().getBoatConfig().boats) {
             boat.shiftUp();
@@ -43,18 +41,29 @@ public class PlayState extends GameState {
         }
     }
 
+    private void debug() {
+
+        System.out.println("Opponent boats:");
+        for (Boat boat : GameManager.getOpponent().getBoatConfig().boats) {
+            System.out.println("- Boat with tiles: ");
+            for (Tile tile : boat.getTiles()) {
+                System.out.println("  - Tile at X: " + tile._index_x + ", Y: " + tile._index_y);
+            }
+            System.out.println(" - Boat hit flags:");
+            for (boolean hit : boat.getHits()) {
+                System.out.println("  - " + hit);
+            }
+        }
+
+    }
+
     @Override
     public void render() {
 
         for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles()) {
             for (Tile tile : list) {
                 AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
-                if (tile.isSelected()) {
-                    AssetManager.shape.setColor(Color.RED);
-                }
-                else {
-                    AssetManager.shape.setColor(Color.DARK_GRAY);
-                }
+                AssetManager.shape.setColor(Color.DARK_GRAY);
                 AssetManager.shape.rect(tile._posx, tile._posy , Tile.TILE_SIZE, Tile.TILE_SIZE);
                 AssetManager.shape.end();
             }
@@ -63,19 +72,16 @@ public class PlayState extends GameState {
         for (Tile[] list : GameManager.getPlayer().get_grid().get_tiles()) {
             for (Tile tile : list) {
                 AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
-                if (tile.isSelected()) {
-                    AssetManager.shape.setColor(Color.RED);
-                }
-                else {
-                    AssetManager.shape.setColor(Color.DARK_GRAY);
-                }
+                AssetManager.shape.setColor(Color.DARK_GRAY);
                 AssetManager.shape.rect(tile._posx, tile._posy , Tile.TILE_SIZE, Tile.TILE_SIZE);
                 AssetManager.shape.end();
             }
         }
 
         for (Boat boat : GameManager.getOpponent().getBoatConfig().boats) {
-            boat.render(AssetManager.batch);
+            if (boat.isSunk()) {
+                boat.render(AssetManager.batch);
+            }
         }
 
         for (Boat boat : GameManager.getPlayer().getBoatConfig().boats) {
@@ -85,7 +91,13 @@ public class PlayState extends GameState {
         for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles()) {
             for (Tile tile : list) {
                 if (tile.burning) {
-                    AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy);
+                    AssetManager.draw(AssetManager.fire_sprite, tile._posx - 10, tile._posy);
+                }
+                else if (tile.isHit()) {
+                    AssetManager.draw(AssetManager.cross_sprite, tile._posx, tile._posy);
+                }
+                else if (tile.isSelected()) {
+                    AssetManager.draw(AssetManager.crosshair_sprite, tile._posx, tile._posy);
                 }
             }
         }
@@ -94,6 +106,9 @@ public class PlayState extends GameState {
             for (Tile tile : list) {
                 if (tile.burning) {
                     AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy);
+                }
+                else if (tile.isHit()) {
+                    AssetManager.draw(AssetManager.cross_sprite, tile._posx, tile._posy);
                 }
             }
         }
@@ -117,7 +132,7 @@ public class PlayState extends GameState {
 
             for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles()) {
                 for (Tile tile : list) {
-                    if (touch_rectangle.overlaps(tile.get_rectangle())) {
+                    if (touch_rectangle.overlaps(tile.get_rectangle()) && !tile.isHit()) {
                         selected_tile = tile;
                         selection = true;
                         break;
@@ -144,6 +159,11 @@ public class PlayState extends GameState {
                     if (selected_tile == tile) {
                         boat.hit(tile);
                         hit = true;
+                        if (boat.isSunk()) {
+                            boat.show();
+                        }
+                        GameManager.getOpponent().checkDefeat();
+                        debug();
                     }
                 }
             }
@@ -152,14 +172,13 @@ public class PlayState extends GameState {
             }
             else {
                 System.out.println("You hit nothing");
-                for (Boat boat : GameManager.getOpponent().getBoatConfig().boats) {
-                    for (Tile tile : boat.getTiles()) {
-                        System.out.println("Tile at " + String.valueOf(tile.getIndex()[0] + " : " + String.valueOf(selected_tile.getIndex()[1])));
-                    }
-                }
             }
+            selected_tile.hit();
 
         }
+        }
+        if (GameManager.getOpponent().allShipsSunk()) {
+            GameManager.setState(State.gameEnd);
         }
     }
 

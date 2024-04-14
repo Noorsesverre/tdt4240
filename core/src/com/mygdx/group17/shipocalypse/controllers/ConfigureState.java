@@ -1,5 +1,6 @@
 package com.mygdx.group17.shipocalypse.controllers;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.group17.shipocalypse.models.State;
@@ -27,7 +28,7 @@ public class ConfigureState extends GameState {
     private final GameConfig gameconfig;
     // These properties are only needed for this game state
     private boolean ghost = false;
-    private ArrayList<Tile> ghost_tiles; // Used to see how boats may be rotated
+    private ArrayList<ArrayList<Tile>> ghost_tiles; // Used to see how boats may be rotated
     private Boat ghost_boat;
     private List<BoatButton> boatButtonList;
     private Boat hoverBoat;
@@ -52,8 +53,8 @@ public class ConfigureState extends GameState {
         for (Map.Entry<Integer, Integer> entry : gameconfig.getAllowed_boats().entrySet()) {
             boatButtonList.add(new BoatButton(
                     AssetManager.shape,
-                    85+150 * entry.getKey(),
-                    525  ,
+                    43+75 * entry.getKey(),
+                    267  ,
                     entry.getKey(),
                     entry.getValue())
             );
@@ -72,12 +73,12 @@ public class ConfigureState extends GameState {
                             AssetManager.shape.setColor(Color.RED);
                         }
                     }
-                } else if (ghost && ghost_tiles.contains(tile)) {
+                } else if (ghost && ghost_tiles.get(0).contains(tile) && Gdx.app.getType() == Application.ApplicationType.Desktop) {
                     for (Tile ghost_tile : ghost_boat.getTiles()) {
                         ghost_tile.unAssign();
                     }
                     AssetManager.shape.begin(ShapeRenderer.ShapeType.Filled);
-                    if (checkIfTilesAvailable(ghost_tiles) && ghost_tiles.size() == ghost_boat.getSize()) {
+                    if (checkIfTilesAvailable(ghost_tiles) && ghost_tiles.get(0).size() == ghost_boat.getSize()) {
                         AssetManager.shape.setColor(Color.BLUE);
                     } else {
                         AssetManager.shape.setColor(Color.RED);
@@ -127,8 +128,12 @@ public class ConfigureState extends GameState {
         // Use viewport/AssetManager to unproject input coordinates to game world coordinates.
         Vector3 input_vector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         Vector3 projected_vector = AssetManager.unprojectInput(input_vector);
-        Rectangle touch_rectangle = new Rectangle(projected_vector.x - 2, projected_vector.y - 2, 4, 4);
+        Rectangle touch_rectangle = new Rectangle(projected_vector.x - 2, projected_vector.y - 2, 2, 2);
 
+        int android_correction = 0;
+        if (Gdx.app.getType() == Application.ApplicationType.Android) {
+            android_correction = android_correction + 100;
+        }
         if (Gdx.input.isTouched() ) {
 
             // Just update the hoverboat position
@@ -136,7 +141,7 @@ public class ConfigureState extends GameState {
                 int adjusted_x = (int)projected_vector.x - hoverBoat._texture.getWidth() / 2;
                 int adjusted_y = (int)projected_vector.y - hoverBoat._texture.getHeight() / 2;
                 hoverBoat._posx = adjusted_x;
-                hoverBoat._posy = adjusted_y;
+                hoverBoat._posy = adjusted_y + android_correction;
             }
             // This creates a hoverboat
             // for every button
@@ -147,7 +152,7 @@ public class ConfigureState extends GameState {
                     touching = true;
                     int adjusted_x = (int)projected_vector.x - boatBtn.getTexture().getWidth() / 2;
                     int adjusted_y = (int)projected_vector.y - boatBtn.getTexture().getHeight() / 2;
-                    hoverBoat = new Boat(adjusted_x, adjusted_y, boatBtn.getSize());
+                    hoverBoat = new Boat(adjusted_x, adjusted_y + android_correction, boatBtn.getSize());
                 }
             }
 
@@ -189,11 +194,11 @@ public class ConfigureState extends GameState {
                             }
                             tile.unAssign();
                         }
-                        ArrayList<Tile> placement_tiles = getPlacementTiles(boat.get_rectangle(selected_tile._posx, selected_tile._posy, true, origin), player);
+                        ArrayList<ArrayList<Tile>> placement_tiles = getPlacementTiles(boat.get_rectangle(selected_tile._posx, selected_tile._posy, true, origin), player);
                         if (checkIfTilesAvailable(placement_tiles) && placement_tiles.size() == boat.getSize()) {
                             player.getBoatConfig().RemoveBoat(boat);
-                            placeBoat(boat, placement_tiles, true, player);
-                            boat.addTiles(placement_tiles);
+                            placeBoat(boat, placement_tiles.get(0), true, player);
+                            boat.addTiles(placement_tiles.get(0));
                         } else {
                             for (Tile tile: boat.getTiles()) {
                                 tile.assign();
@@ -235,9 +240,9 @@ public class ConfigureState extends GameState {
 
             // If there is a hoverboat when touch is released, then place the boat on the last matching tile
             if (hoverBoat != null) {
-                ArrayList<Tile> placement_tiles = getPlacementTiles(hoverBoat.get_rectangle(), player);
+                ArrayList<ArrayList<Tile>> placement_tiles = getPlacementTiles(hoverBoat.get_rectangle(), player);
                 if (checkIfPlacementIsValid(hoverBoat, placement_tiles) && gameconfig.subtract_allowed_boat_type(hoverBoat.getSize())) {
-                    placeBoat(hoverBoat, placement_tiles, false, player);
+                    placeBoat(hoverBoat, placement_tiles.get(0), false, player);
                     SetBoatButtons();
                     placeRandomOpponent(new Boat(hoverBoat._posx, hoverBoat._posy, hoverBoat._boatSize));
                 }
@@ -252,12 +257,17 @@ public class ConfigureState extends GameState {
         }
     }
 
-    public ArrayList<Tile> getPlacementTiles(Rectangle boat_rectangle, Player pl) {
-        ArrayList<Tile> placement_tiles = new ArrayList<Tile>();
+    public ArrayList<ArrayList<Tile>> getPlacementTiles(Rectangle boat_rectangle, Player pl) {
+        ArrayList<ArrayList<Tile>> placement_tiles = new ArrayList<ArrayList<Tile>>();
+        placement_tiles.add(new ArrayList<Tile>());
+        placement_tiles.add(new ArrayList<Tile>());
         for (Tile[] tile_list : pl.get_grid().get_tiles()) {
             for (Tile tile: tile_list) {
                 if (tile.getCenter().overlaps(boat_rectangle)) {
-                    placement_tiles.add(tile);
+                    placement_tiles.get(0).add(tile);
+                    for (Tile adjacent_tile : tile.getAdjacentTiles()) {
+                        placement_tiles.get(1).add(adjacent_tile);
+                    }
                 }
             }
         }
@@ -288,34 +298,39 @@ public class ConfigureState extends GameState {
         boolean found_place = false;
         while (!found_place) {
             boat.move();
-            ArrayList<Tile> placement_tiles = getPlacementTiles(boat.get_rectangle(), opponent);
+            System.out.println(boat._posx + "  " + boat._posy);
+            ArrayList<ArrayList<Tile>> placement_tiles = getPlacementTiles(boat.get_rectangle(), opponent);
             if (checkIfPlacementIsValid(boat, placement_tiles)) {
-                placeOpponent(boat, placement_tiles, opponent);
+                placeOpponent(boat, placement_tiles.get(0), opponent);
                 found_place = true;
             }
         }
     }
 
-    private boolean checkIfPlacementIsValid(Boat hoverBoat, ArrayList<Tile> placement_tiles) {
+    private boolean checkIfPlacementIsValid(Boat hoverBoat, ArrayList<ArrayList<Tile>> placement_tiles) {
         boolean placement_valid = true;
-        if (placement_tiles.size() != hoverBoat.getSize()) {
+        if (placement_tiles.get(0).size() != hoverBoat.getSize()) {
             placement_valid = false;
         }
-        for (Tile tile : placement_tiles) {
-            if (tile.isOccupied()) {
-                System.out.println("some tile is occupied");
-                placement_valid = false;
+        for (ArrayList<Tile> list : placement_tiles) {
+            for (Tile tile : list) {
+                if (tile.isOccupied()) {
+                    System.out.println("Tile at " + tile._index_x + ":" + tile._index_y + "is occupied");
+                    placement_valid = false;
+                }
             }
         }
         return  placement_valid;
     }
 
-    private boolean checkIfTilesAvailable(ArrayList<Tile> placement_tiles) {
+    private boolean checkIfTilesAvailable(ArrayList<ArrayList<Tile>> placement_tiles) {
         boolean tiles_available = true;
-        for (Tile tile : placement_tiles) {
-            if (tile.isOccupied()) {
-                System.out.println("some tile is occupied");
-                tiles_available = false;
+        for (ArrayList<Tile> list : placement_tiles) {
+            for (Tile tile : list) {
+                if (tile.isOccupied()) {
+                    System.out.println("Tile at " + tile._index_x + ":" + tile._index_y + " is occupied");
+                    tiles_available = false;
+                }
             }
         }
         return  tiles_available;
