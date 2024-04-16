@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+
 import com.mygdx.group17.shipocalypse.models.Options;
 import com.mygdx.group17.shipocalypse.singletons.*;
 import com.mygdx.group17.shipocalypse.models.State;
@@ -15,6 +16,12 @@ public class Shipocalypse extends ApplicationAdapter {
 	OrthographicCamera camera;
 	private FitViewport viewport;
 	private Stage stage;
+
+	private FirebaseInterface firebaseInterface;
+
+	public Shipocalypse(FirebaseInterface firebaseInterface) {
+		this.firebaseInterface = firebaseInterface;
+	}
 
 	@Override
 	public void create () {
@@ -26,6 +33,8 @@ public class Shipocalypse extends ApplicationAdapter {
 		GameManager.init(this);
 		GameManager.setState(State.menu);
 		AssetManager.setViewport(viewport);
+		firebaseInterface.writeHostCode("123", "8x8", "medium");
+
 	}
 
 	@Override
