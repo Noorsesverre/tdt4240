@@ -27,7 +27,12 @@ public class Shipocalypse extends ApplicationAdapter {
 	ShapeRenderer shape;
 
 	LoginScreen loginScreen; // Your custom login screen class
+	private FirebaseInterface firebaseInterface;
 
+
+	public Shipocalypse(FirebaseInterface firebaseInterface) {
+		this.firebaseInterface = firebaseInterface;
+	}
 
 	@Override
 	public void create () {
@@ -40,7 +45,7 @@ public class Shipocalypse extends ApplicationAdapter {
 
 		bf = new BitmapFont();
 
-		loginScreen = new LoginScreen(); // Initialize your login screen
+		loginScreen = new LoginScreen(firebaseInterface); // Initialize your login screen here
 	}
 
 	@Override

@@ -4,13 +4,20 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.mygdx.group17.shipocalypse.Shipocalypse;
+import com.google.firebase.FirebaseApp;
+import com.mygdx.group17.shipocalypse.ui.LoginScreen;
 
 public class AndroidLauncher extends AndroidApplication {
-	@Override
-	protected void onCreate (Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		initialize(new Shipocalypse(), config);
+
+		// Create an instance of the AndroidFirebase (implements FirebaseInterface)
+		AndroidFirebase firebaseAuth = new AndroidFirebase();
+
+		// Pass the interface implementation to the Shipocalypse constructor
+		initialize(new Shipocalypse(firebaseAuth), config);
 	}
+
 }
