@@ -7,24 +7,32 @@ import com.mygdx.group17.shipocalypse.models.BoatConfiguration;
 public class Player {
     private boolean defeated = false;
     private Grid grid;
-
     private BoatConfiguration boat_configuration;
-    private Tile current_target;
+    private String player_id;
+    private boolean skipable_player;
 
-    public Player(int gridSizeX, int gridSizeY, BoatConfiguration boats) {
+    public boolean is_skipable_player() {
+        return skipable_player;
+    }
+    public String getPlayer_id() {
+        return player_id;
+    }
+
+    public Player(int gridSizeX, int gridSizeY, BoatConfiguration boats, String player_id) {
+        this(gridSizeX,gridSizeY,boats,player_id,false);
+    }
+
+    public Player(int gridSizeX, int gridSizeY, BoatConfiguration boats, String player_id, boolean is_skipable) {
         grid = new Grid(gridSizeX, gridSizeY);
         boat_configuration = boats;
+        this.player_id = player_id;
+        this.skipable_player = is_skipable;
     }
 
     public Grid get_grid() {
         return grid;
     }
 
-    public void select_target(int x, int y) {
-
-        // add some checks to see if target is valid
-//        current_target = Grid[x][y];
-    }
 
     public void checkDefeat() {
         boolean isDefeated = true;
@@ -37,7 +45,21 @@ public class Player {
         defeated = isDefeated;
     }
 
-    public void fire() {
+    public void hit_random_tile() {
+        boolean found_tile = false;
+        while (!found_tile) {
+            int random_x = (int) (Math.random() * grid.getSize());
+            int random_y = (int) (Math.random() * grid.getSize());
+
+            System.out.print("Random hit got " + random_x + " og " + random_y);
+
+            Tile chosen_one = grid.get_tiles()[random_x][random_y];
+
+            if (!chosen_one.isHit() || !chosen_one.isExposed()) {
+                grid.get_tiles()[random_x][random_y].hit();
+                found_tile = true;
+            }
+        }
     }
 
     public boolean allShipsSunk() {

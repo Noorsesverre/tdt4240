@@ -1,7 +1,7 @@
 package com.mygdx.group17.shipocalypse.models;
 
-import com.mygdx.group17.shipocalypse.models.Options;
 
+import java.util.ArrayList;
 
 public class Grid {
 
@@ -56,4 +56,33 @@ public class Grid {
     public int getSize() { return _tiles.length; }
 
 
+    public ArrayList<Tile> get_surrounding_tiles(Tile center_tile) {
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+
+        tiles.add(center_tile);
+
+        for (Tile tile : center_tile.getAdjacentTiles()) {
+            tiles.add(tile);
+        }
+
+        // NOTE: Lazy mans way of avoiding out of range index errors
+        try {
+            tiles.add(_tiles[center_tile._index_x - 1][center_tile._index_y + 1]);
+        } catch (Exception e){ }
+
+        try {
+            tiles.add(_tiles[center_tile._index_x - 1][center_tile._index_y - 1]);
+
+        } catch (Exception e){ }
+
+        try {
+            tiles.add(_tiles[center_tile._index_x + 1][center_tile._index_y + 1]);
+        } catch (Exception e){ }
+
+        try {
+            tiles.add(_tiles[center_tile._index_x + 1][center_tile._index_y - 1]);
+        } catch (Exception e){ }
+
+        return tiles;
+    }
 }

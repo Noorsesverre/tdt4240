@@ -121,7 +121,6 @@ public class Boat {
             System.out.println(hit);
         }
         hits[tiles.indexOf(tile)] = true;
-
         for (boolean hit : hits) {
             System.out.println(hit);
         }
@@ -146,4 +145,7 @@ public class Boat {
         }
     }
 
+    public void expose(Tile targetTile) {
+        targetTile.exposed();
+    }
 }

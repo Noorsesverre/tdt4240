@@ -16,7 +16,7 @@ public class Tile {
     public int _index_y;
     public boolean occupied;
     public boolean selected;
-
+    public boolean exposed;
     public boolean is_hit;
 
     public boolean burning;
@@ -86,5 +86,13 @@ public class Tile {
     }
     public void shiftUp() {
         _posy = _posy + 300;
+    }
+
+    public void exposed() {
+        this.exposed = true;
+    }
+
+    public boolean isExposed() {
+        return exposed;
     }
 }
