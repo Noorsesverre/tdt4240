@@ -10,7 +10,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.2'
-        
+        classpath 'com.google.gms:google-services:4.4.1'
+
 
     }
 }
@@ -64,6 +65,9 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+
+        implementation 'com.google.firebase:firebase-core:21.1.0' // Core library
+        implementation 'com.google.firebase:firebase-firestore:24.0.1' // Firestore library
         
     }
 }
@@ -74,6 +78,7 @@ project(":core") {
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
+
         
     }
 }

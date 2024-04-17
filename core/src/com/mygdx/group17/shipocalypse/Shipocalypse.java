@@ -15,6 +15,12 @@ public class Shipocalypse extends ApplicationAdapter {
 	OrthographicCamera camera;
 	private FitViewport viewport;
 	private Stage stage;
+	private FirebaseInterface firebaseInterface;
+
+
+	public Shipocalypse(FirebaseInterface firebaseInterface) {
+		this.firebaseInterface = firebaseInterface;
+	}
 
 	@Override
 	public void create () {
