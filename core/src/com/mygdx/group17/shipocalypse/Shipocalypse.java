@@ -20,6 +20,7 @@ public class Shipocalypse extends ApplicationAdapter {
 
 	public Shipocalypse(FirebaseInterface firebaseInterface) {
 		this.firebaseInterface = firebaseInterface;
+		GameManager.setFirebase(firebaseInterface);
 	}
 
 	@Override

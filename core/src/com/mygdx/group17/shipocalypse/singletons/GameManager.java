@@ -1,5 +1,6 @@
 package com.mygdx.group17.shipocalypse.singletons;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import com.mygdx.group17.shipocalypse.FirebaseInterface;
 import com.mygdx.group17.shipocalypse.models.*;
 import com.mygdx.group17.shipocalypse.controllers.*;
 import com.mygdx.group17.shipocalypse.Shipocalypse;
@@ -20,6 +22,8 @@ public class GameManager {
     private static Player opponent;
     private static boolean touching = false; // Used to avoid the same touch triggering twice.
 
+    private static FirebaseInterface firebase;
+
     private GameManager(Shipocalypse _shipocalypse) {
         AssetManager.getInstance();
     }
@@ -28,6 +32,7 @@ public class GameManager {
         player = _player;
     }
     public void setOpponent(Player _opponent) { opponent = _opponent; }
+
 
     public static void init(Shipocalypse _shipocalypse) {
         if (single_instance != null) {
@@ -70,6 +75,7 @@ public class GameManager {
     public static void createGame(int gridX, int gridY, Map<Integer, Integer> boats) {
         GameConfig config = new GameConfig(gridX, gridY, boats);
         playState = new ConfigureState(config);
+        firebase.createGame(gridX, gridY, boats);
     }
 
     public static void handleInput() { playState.handleInput(); }
@@ -94,6 +100,7 @@ public class GameManager {
         if (Gdx.input.isTouched()) {
             Vector3 input_vector = AssetManager.unprojectInput(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             debugCursor(input_vector.x, input_vector.y, Color.GREEN);
+            firebase.writeToDatabase("kaitest", new HashMap<String, Object>());
         }
 
         playState.render();
@@ -121,6 +128,10 @@ public class GameManager {
 
     public static Player getPlayer() { return player; }
     public static GameConfig getConfig() { return configuration; }
+
+    public static void setFirebase(FirebaseInterface firebase_interface) {
+        firebase = firebase_interface;
+    }
 
 
 }
