@@ -69,9 +69,14 @@ public class AssetManager {
     }
 
     public static void drawBackground() {
-        shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.rect(0,0, Options.GAME_WIDTH, Options.GAME_HEIGHT, Options.BG_COLOR[0], Options.BG_COLOR[0], Options.BG_COLOR[1], Options.BG_COLOR[1]);
-        shape.end();
+        Sprite background = new Sprite(new Texture("water.png"));
+        batch.begin();
+        for (int i = 0; i < Options.GAME_WIDTH / background.getWidth(); i++) {
+            for (int j = 0; j < Options.GAME_HEIGHT / background.getHeight(); j++) {
+                batch.draw(background, i * background.getWidth(), j * background.getHeight());
+            }
+        }
+        batch.end();
     }
 
     public static void draw(Texture drawable, int x, int y) {
