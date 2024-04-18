@@ -52,6 +52,7 @@ public class Grid {
         return _tiles;
     }
 
+    public Tile get_tile(int x, int y) { return _tiles[x][y]; }
 
     public int getSize() { return _tiles.length; }
 
@@ -84,5 +85,11 @@ public class Grid {
         } catch (Exception e){ }
 
         return tiles;
+    }
+
+    public Tile get_random_tile() {
+        int random_x = (int) (Math.random() * getSize());
+        int random_y = (int) (Math.random() * getSize());
+        return _tiles[random_x][random_y];
     }
 }

@@ -20,6 +20,10 @@ public abstract class Button {
     private ShapeRenderer _shaperenderer;
     private String _text;
 
+    private int manual_text_offset_x = 0;
+
+    private int manual_text_offset_y = 0;
+
     Color color = Color.RED;
 
     public Button(ShapeRenderer shape, int x, int y, String text, int width) {
@@ -51,7 +55,7 @@ public abstract class Button {
 
         Vector3 text_pos = FindCenterPosition();
 
-        AssetManager.write(_text, (int)_position.x + (int)text_pos.x, (int)_position.y + (int)text_pos.y);
+        AssetManager.write(_text, (int)_position.x + (int)text_pos.x + manual_text_offset_x, (int)_position.y + (int)text_pos.y + manual_text_offset_y);
     }
     public void render(Color c) {
         _shaperenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -64,9 +68,10 @@ public abstract class Button {
         AssetManager.write(_text, (int)_position.x + (int)text_pos.x, (int)_position.y + (int)text_pos.y);
     }
     private Vector3 FindCenterPosition() {
-        int text_length = _text.length() * 8;
+        int lines = _text.length() - _text.replace("\n", "").length() + 1;
+        int text_length = _text.length() * 8 / lines;
 
-        int height_pos = height / 2 + 8;
+        int height_pos = height / 2 + 8 * lines;
 
         int width_pos = (width / 2 ) - (text_length / 2);
 
@@ -80,6 +85,15 @@ public abstract class Button {
 
     public String get_text () {
         return _text;
+    }
+
+    public void set_text(String text) {
+        _text = text;
+    }
+
+    public void set_manual_text_offset(int x, int y) {
+        manual_text_offset_x = x;
+        manual_text_offset_y = y;
     }
 
     public Vector3 get_position() {

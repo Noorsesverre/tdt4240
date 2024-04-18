@@ -51,13 +51,20 @@ public class Player {
             int random_x = (int) (Math.random() * grid.getSize());
             int random_y = (int) (Math.random() * grid.getSize());
 
-            System.out.print("Random hit got " + random_x + " og " + random_y);
+            System.out.print("Random hit (" + random_x + ", " + random_y+")");
 
             Tile chosen_one = grid.get_tiles()[random_x][random_y];
 
             if (!chosen_one.isHit() || !chosen_one.isExposed()) {
                 grid.get_tiles()[random_x][random_y].hit();
                 found_tile = true;
+            }
+            for (Boat boat: boat_configuration.boats) {
+                for (Tile boat_tile: boat.getTiles()) {
+                    if (chosen_one == boat_tile) {
+                        boat.hit(boat_tile);
+                    }
+                }
             }
         }
     }

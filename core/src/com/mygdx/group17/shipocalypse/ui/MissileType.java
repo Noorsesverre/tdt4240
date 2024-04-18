@@ -1,6 +1,6 @@
 package com.mygdx.group17.shipocalypse.ui;
 
-public enum MissleType {
+public enum MissileType {
     Normal,
     Healing,
     TripleRandom,

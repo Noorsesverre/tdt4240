@@ -54,6 +54,8 @@ public class Tile {
         burning = true;
     }
 
+    public void removeBurning() { burning = false; }
+
     public boolean isOccupied() { return occupied; }
 
     public Tile assign() {
@@ -77,6 +79,7 @@ public class Tile {
         return selected;
     }
     public void hit() {
+        exposed = false;
         is_hit = true;
     }
     public boolean isHit() { return is_hit; }
@@ -89,10 +92,12 @@ public class Tile {
     }
 
     public void exposed() {
-        this.exposed = true;
+        exposed = true;
     }
 
     public boolean isExposed() {
         return exposed;
     }
+
+    public void removeHit() { is_hit = false; }
 }
