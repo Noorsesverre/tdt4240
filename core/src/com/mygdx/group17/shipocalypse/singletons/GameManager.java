@@ -1,9 +1,12 @@
 package com.mygdx.group17.shipocalypse.singletons;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
@@ -20,12 +23,17 @@ public class GameManager {
     private static GameConfig configuration;
     private static Player player;
     private static Player opponent;
+    private static Preferences saved; // used for storing an ID on the device
+    private static Game game_to_configure;
+    private static String user_id; // fetched from firebase
+    private static ArrayList<String> game_id; // fetched from firebase
     private static boolean touching = false; // Used to avoid the same touch triggering twice.
 
     private static FirebaseInterface firebase;
 
     private GameManager(Shipocalypse _shipocalypse) {
         AssetManager.getInstance();
+        saved = Gdx.app.getPreferences("saved");
     }
 
     public void setPlayer(Player _player) {
@@ -74,8 +82,10 @@ public class GameManager {
 
     public static void createGame(int gridX, int gridY, Map<Integer, Integer> boats) {
         GameConfig config = new GameConfig(gridX, gridY, boats);
+        String game_id = UUID.randomUUID().toString().substring(0,8); // pseudo-random gameID
+        game_to_configure = new Game(user_id, game_id);
+        firebase.hostGame(game_to_configure);
         playState = new ConfigureState(config);
-        firebase.createGame(gridX, gridY, boats);
     }
 
     public static void handleInput() { playState.handleInput(); }
@@ -102,7 +112,6 @@ public class GameManager {
             debugCursor(input_vector.x, input_vector.y, Color.GREEN);
             firebase.writeToDatabase("kaitest", new HashMap<String, Object>());
         }
-
         playState.render();
     }
 
@@ -120,6 +129,8 @@ public class GameManager {
 
     public static void setConfig(GameConfig config, Player pl, Player opp) {
         player = pl;
+        game_to_configure.addPlayer(player, 0);
+        firebase.updateGame(game_to_configure);
         opponent = opp;
         configuration = config;
     }
@@ -131,6 +142,16 @@ public class GameManager {
 
     public static void setFirebase(FirebaseInterface firebase_interface) {
         firebase = firebase_interface;
+        String uniqueID;
+        if (!saved.contains("ID")) {
+            uniqueID = UUID.randomUUID().toString(); // Generate a random ID
+            saved.putString("ID", uniqueID); // Save it for later
+            saved.flush();
+        } else {
+            uniqueID = saved.getString("ID");
+        }
+        firebase.addUser(uniqueID); // Will only add user if user does not already exist in firebase
+        user_id = uniqueID;
     }
 
 

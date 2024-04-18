@@ -20,7 +20,6 @@ public class Shipocalypse extends ApplicationAdapter {
 
 	public Shipocalypse(FirebaseInterface firebaseInterface) {
 		this.firebaseInterface = firebaseInterface;
-		GameManager.setFirebase(firebaseInterface);
 	}
 
 	@Override
@@ -31,6 +30,7 @@ public class Shipocalypse extends ApplicationAdapter {
 		viewport = new FitViewport(Options.GAME_WIDTH, Options.GAME_HEIGHT, camera);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		GameManager.init(this);
+		GameManager.setFirebase(firebaseInterface);
 		GameManager.setState(State.menu);
 		AssetManager.setViewport(viewport);
 	}

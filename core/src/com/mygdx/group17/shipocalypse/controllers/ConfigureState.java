@@ -63,7 +63,7 @@ public class ConfigureState extends GameState {
 
     @Override
     public void render() {
-        for (Tile[] list : player.get_grid().get_tiles()) {
+        for (Tile[] list : player.get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 if (hoverBoat != null && tile.getCenter().overlaps(hoverBoat.get_rectangle())) {
                     AssetManager.shape.begin(ShapeRenderer.ShapeType.Filled);
@@ -178,7 +178,7 @@ public class ConfigureState extends GameState {
                 for (Boat boat : player.getBoatConfig().boats) {
                     if (touch_rectangle.overlaps(boat.get_rectangle()) && !touching && hoverBoat == null) {
                         Tile selected_tile = new Tile(0,0,0,0);
-                        for (Tile[] list : player.get_grid().get_tiles()) {
+                        for (Tile[] list : player.get_grid().get_tiles_aslist()) {
                             for (Tile tile : list) {
                                 if (touch_rectangle.overlaps(tile.get_rectangle())) {
                                     selected_tile = tile;
@@ -217,7 +217,7 @@ public class ConfigureState extends GameState {
                 if (touch_rectangle.overlaps(boat.get_rectangle())) {
                     ghost = true;
                     Tile possibly_selected_tile = new Tile(0,0,0,0);
-                    for (Tile[] list : player.get_grid().get_tiles()) {
+                    for (Tile[] list : player.get_grid().get_tiles_aslist()) {
                         for (Tile tile : list) {
                             if (touch_rectangle.overlaps(tile.get_rectangle())) {
                                 possibly_selected_tile = tile;
@@ -261,7 +261,7 @@ public class ConfigureState extends GameState {
         ArrayList<ArrayList<Tile>> placement_tiles = new ArrayList<ArrayList<Tile>>();
         placement_tiles.add(new ArrayList<Tile>());
         placement_tiles.add(new ArrayList<Tile>());
-        for (Tile[] tile_list : pl.get_grid().get_tiles()) {
+        for (Tile[] tile_list : pl.get_grid().get_tiles_aslist()) {
             for (Tile tile: tile_list) {
                 if (tile.getCenter().overlaps(boat_rectangle)) {
                     placement_tiles.get(0).add(tile);

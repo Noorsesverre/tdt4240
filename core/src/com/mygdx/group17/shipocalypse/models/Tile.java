@@ -6,9 +6,7 @@ import java.util.ArrayList;
 
 
 public class Tile {
-
-    ArrayList<Tile> adjacent_tiles;
-
+    public ArrayList<Tile> adjacent_tiles;
     public static final int TILE_SIZE = 30;
     public int _posx;
     public int _posy;
@@ -16,9 +14,7 @@ public class Tile {
     public int _index_y;
     public boolean occupied;
     public boolean selected;
-
     public boolean is_hit;
-
     public boolean burning;
 
     public Tile(int posx, int posy, int index_x, int index_y) {
@@ -87,4 +83,24 @@ public class Tile {
     public void shiftUp() {
         _posy = _posy + 300;
     }
+
+    // FOLLOWING IS REQUIRED FOR FIREBASE SERIALIZATION
+    // These methods are not used directly by our app, but must exist.
+    public Tile() {}
+    public ArrayList<Tile> getAdjacent_tiles() { return adjacent_tiles; }
+    public int get_posx() { return _posx; }
+    public int get_posy() { return _posy; }
+    public int get_index_x() { return _index_x; }
+    public int get_index_y() { return _index_y; }
+    public void setOccupied(boolean occupied) { this.occupied = occupied; }
+    public void setSelected(boolean selected) { this.selected = selected; }
+    public boolean isIs_hit() { return is_hit; }
+    public void setIs_hit(boolean is_hit) { this.is_hit = is_hit; }
+    public boolean isBurning() { return burning; }
+    public void setAdjacent_tiles(ArrayList<Tile> adjacent_tiles) { this.adjacent_tiles = adjacent_tiles; }
+    public void set_posx(int _posx) { this._posx = _posx; }
+    public void set_posy(int _posy) { this._posy = _posy; }
+    public void set_index_x(int _index_x) { this._index_x = _index_x; }
+    public void setBurning(boolean burning) { this.burning = burning; }
+
 }

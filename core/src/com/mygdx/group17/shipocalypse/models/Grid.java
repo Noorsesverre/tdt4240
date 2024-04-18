@@ -2,10 +2,13 @@ package com.mygdx.group17.shipocalypse.models;
 
 import com.mygdx.group17.shipocalypse.models.Options;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class Grid {
 
-    private Tile[][] _tiles;
+    public Tile[][] _tiles;
     public int GRID_POS_X;
     public int GRID_POS_Y;
     public static final int GRID_GAP = 2;
@@ -47,13 +50,35 @@ public class Grid {
             }
         }
     }
+    public Tile[][] get_tiles_aslist() { return _tiles; }
 
-    public Tile[][] get_tiles() {
-        return _tiles;
+
+    // FOLLOWING IS REQUIRED FOR FIREBASE SERIALIZATION
+    // These methods are not used directly by our app, but must exist.
+    public Grid() {}
+    public ArrayList<ArrayList<Tile>> get_tiles() {
+        return new ArrayList<ArrayList<Tile>>() {
+            {
+                for (Tile[] tileset : _tiles) {
+                    add(new ArrayList<Tile>() {
+                        {
+                            this.addAll(Arrays.asList(tileset));
+                        }
+                    });
+                }
+            }
+        };
     }
-
-
-    public int getSize() { return _tiles.length; }
-
+    public int getGRID_POS_X() { return GRID_POS_X; }
+    public int getGRID_POS_Y() { return GRID_POS_Y; }
+    public void set_tiles(ArrayList<ArrayList<Tile>> tiles) {
+        for (int x = 0; x < tiles.size(); x++) {
+            for (int y = 0; y < tiles.size(); y++) {
+                _tiles[x][y] = tiles.get(x).get(y);
+            }
+        }
+    }
+    public void setGRID_POS_X(int _GRID_POS_X) { GRID_POS_X = _GRID_POS_X; }
+    public void setGRID_POS_Y(int _GRID_POS_Y) { GRID_POS_Y = _GRID_POS_Y; }
 
 }

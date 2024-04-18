@@ -29,12 +29,12 @@ public class PlayState extends GameState {
         for (Boat boat : GameManager.getPlayer().getBoatConfig().boats) {
             boat.shiftDown();
         }
-        for (Tile[] list : GameManager.getPlayer().get_grid().get_tiles()) {
+        for (Tile[] list : GameManager.getPlayer().get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 tile.shiftDown();
             }
         }
-        for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles()) {
+        for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 tile.shiftUp();
             }
@@ -50,7 +50,7 @@ public class PlayState extends GameState {
                 System.out.println("  - Tile at X: " + tile._index_x + ", Y: " + tile._index_y);
             }
             System.out.println(" - Boat hit flags:");
-            for (boolean hit : boat.getHits()) {
+            for (boolean hit : boat.getHits_aslist()) {
                 System.out.println("  - " + hit);
             }
         }
@@ -60,7 +60,7 @@ public class PlayState extends GameState {
     @Override
     public void render() {
 
-        for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles()) {
+        for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
                 AssetManager.shape.setColor(Color.DARK_GRAY);
@@ -69,7 +69,7 @@ public class PlayState extends GameState {
             }
         }
 
-        for (Tile[] list : GameManager.getPlayer().get_grid().get_tiles()) {
+        for (Tile[] list : GameManager.getPlayer().get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
                 AssetManager.shape.setColor(Color.DARK_GRAY);
@@ -88,7 +88,7 @@ public class PlayState extends GameState {
             boat.render(AssetManager.batch);
         }
 
-        for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles()) {
+        for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 if (tile.burning) {
                     AssetManager.draw(AssetManager.fire_sprite, tile._posx - 10, tile._posy);
@@ -102,7 +102,7 @@ public class PlayState extends GameState {
             }
         }
 
-        for (Tile[] list : GameManager.getPlayer().get_grid().get_tiles()) {
+        for (Tile[] list : GameManager.getPlayer().get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 if (tile.burning) {
                     AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy);
@@ -130,7 +130,7 @@ public class PlayState extends GameState {
             int input_y = Options.GAME_HEIGHT - Gdx.input.getY();
             Rectangle touch_rectangle = new Rectangle(input_x - 2, input_y - 2, 4, 4);
 
-            for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles()) {
+            for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles_aslist()) {
                 for (Tile tile : list) {
                     if (touch_rectangle.overlaps(tile.get_rectangle()) && !tile.isHit()) {
                         selected_tile = tile;
@@ -140,7 +140,7 @@ public class PlayState extends GameState {
                 }
             }
 
-            for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles()) {
+            for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles_aslist()) {
                 for (Tile tile : list) {
                     if (tile == selected_tile) {
                         tile.select();
