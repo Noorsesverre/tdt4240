@@ -69,7 +69,7 @@ public class AndroidFirebase implements FirebaseInterface{
     @Override
     public void updateGame(Game game) {
         DatabaseReference games = db.getReference("games");
-        games.child(game.id).setValue(game);
+        games.child(game.id).setValue(game.createSerializableData());
     }
     public void addGame(String user_id, String game_id) {
         DatabaseReference user = db.getReference("users/" + user_id);

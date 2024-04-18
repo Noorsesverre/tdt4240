@@ -63,7 +63,7 @@ public class PlayState extends GameState {
         for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
-                AssetManager.shape.setColor(Color.DARK_GRAY);
+                AssetManager.shape.setColor(Color.NAVY);
                 AssetManager.shape.rect(tile._posx, tile._posy , Tile.TILE_SIZE, Tile.TILE_SIZE);
                 AssetManager.shape.end();
             }
@@ -72,7 +72,7 @@ public class PlayState extends GameState {
         for (Tile[] list : GameManager.getPlayer().get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
-                AssetManager.shape.setColor(Color.DARK_GRAY);
+                AssetManager.shape.setColor(Color.NAVY);
                 AssetManager.shape.rect(tile._posx, tile._posy , Tile.TILE_SIZE, Tile.TILE_SIZE);
                 AssetManager.shape.end();
             }
@@ -91,7 +91,7 @@ public class PlayState extends GameState {
         for (Tile[] list : GameManager.getOpponent().get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 if (tile.burning) {
-                    AssetManager.draw(AssetManager.fire_sprite, tile._posx - 10, tile._posy);
+                    AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy + 7);
                 }
                 else if (tile.isHit()) {
                     AssetManager.draw(AssetManager.cross_sprite, tile._posx, tile._posy);
@@ -105,7 +105,7 @@ public class PlayState extends GameState {
         for (Tile[] list : GameManager.getPlayer().get_grid().get_tiles_aslist()) {
             for (Tile tile : list) {
                 if (tile.burning) {
-                    AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy);
+                    AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy + 7);
                 }
                 else if (tile.isHit()) {
                     AssetManager.draw(AssetManager.cross_sprite, tile._posx, tile._posy);
