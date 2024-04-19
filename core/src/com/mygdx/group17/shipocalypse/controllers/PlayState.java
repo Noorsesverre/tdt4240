@@ -80,7 +80,7 @@ public class PlayState extends GameState {
         for (Tile[] list : GameManager.getPlayer("2").get_grid().get_tiles()) {
             for (Tile tile : list) {
                 AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
-                AssetManager.shape.setColor(Color.DARK_GRAY);
+                AssetManager.shape.setColor(Color.NAVY);
                 AssetManager.shape.rect(tile._posx, tile._posy , Tile.TILE_SIZE, Tile.TILE_SIZE);
                 AssetManager.shape.end();
             }
@@ -89,7 +89,7 @@ public class PlayState extends GameState {
         for (Tile[] list : GameManager.getPlayer("1").get_grid().get_tiles()) {
             for (Tile tile : list) {
                 AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
-                AssetManager.shape.setColor(Color.DARK_GRAY);
+                AssetManager.shape.setColor(Color.NAVY);
                 AssetManager.shape.rect(tile._posx, tile._posy , Tile.TILE_SIZE, Tile.TILE_SIZE);
                 AssetManager.shape.end();
             }
@@ -108,8 +108,12 @@ public class PlayState extends GameState {
         for (Tile[] list : GameManager.getPlayer("2").get_grid().get_tiles()) {
             for (Tile tile : list) {
                 if (tile.burning) {
-                    AssetManager.draw(AssetManager.fire_sprite, tile._posx - 10, tile._posy);
-                } else if (tile.isSelected()) {
+                    AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy + 7);
+                }
+                else if (tile.isHit()) {
+                    AssetManager.draw(AssetManager.cross_sprite, tile._posx, tile._posy);
+                }
+                else if (tile.isSelected()) {
                     AssetManager.draw(AssetManager.crosshair_sprite, tile._posx, tile._posy);
                 } else if (tile.isExposed()) {
                     AssetManager.draw(AssetManager.exclamation_point_sprite, tile._posx, tile._posy);
@@ -122,10 +126,9 @@ public class PlayState extends GameState {
         for (Tile[] list : GameManager.getPlayer("1").get_grid().get_tiles()) {
             for (Tile tile : list) {
                 if (tile.burning) {
-                    AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy);
-                } else if (tile.isSelected()) {
-                    AssetManager.draw(AssetManager.crosshair_sprite, tile._posx, tile._posy);
-                } else if (tile.isHit()) {
+                    AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy + 7);
+                }
+                else if (tile.isHit()) {
                     AssetManager.draw(AssetManager.cross_sprite, tile._posx, tile._posy);
                 }
             }
