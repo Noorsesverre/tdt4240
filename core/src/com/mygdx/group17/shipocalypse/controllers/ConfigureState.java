@@ -88,7 +88,7 @@ public class ConfigureState extends GameState {
                     }
                 } else {
                         AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
-                        AssetManager.shape.setColor(Color.DARK_GRAY);
+                        AssetManager.shape.setColor(Color.NAVY);
                 }
 
                 AssetManager.shape.rect(tile._posx, tile._posy, Tile.TILE_SIZE, Tile.TILE_SIZE);
