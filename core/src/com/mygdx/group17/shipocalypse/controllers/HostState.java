@@ -9,6 +9,8 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import com.mygdx.group17.shipocalypse.models.Action;
+import com.mygdx.group17.shipocalypse.models.BoatConfiguration;
+import com.mygdx.group17.shipocalypse.models.Player;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 import com.mygdx.group17.shipocalypse.ui.MenuButton;
 import com.mygdx.group17.shipocalypse.models.Options;
@@ -36,7 +38,7 @@ public class HostState extends GameState {
             options.put(type, new ArrayList<>());
             // Iterate through options for this type and create MenuButton
             for (String opt : Options.options.get(type).keySet()) {
-                options.get(type).add(new MenuButton(shapeRenderer, (int) buttonGameCenter + i * (MenuButton.BUTTON_WIDTH + 10), y, opt, Action.selectOption, Options.options.get(type).get(opt)));
+                options.get(type).add(new MenuButton(shapeRenderer, (int) buttonGameCenter + i * (MenuButton.BUTTON_WIDTH + 10), y, opt, Options.options.get(type).get(opt)));
                 ++i;
             }
             y = y - 100;
@@ -65,10 +67,10 @@ public class HostState extends GameState {
         //render all option buttons
         for (List<MenuButton> l : options.values()) {
             for (MenuButton b : l) {
-                b.render(AssetManager.batch, b.getColor());
+                b.render(b.getColor());
             }
         }
-       start_button.render(AssetManager.batch);
+       start_button.render();
     }
 
     @Override

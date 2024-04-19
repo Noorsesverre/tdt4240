@@ -114,6 +114,10 @@ public class Boat {
         }
     }
 
+    public boolean containsTile(Tile tile) {
+        return tiles.contains(tile);
+    }
+
     public boolean isSunk() { return sunk; }
     public void hit(Tile tile) {
         tile.setBurning();
@@ -121,7 +125,6 @@ public class Boat {
             System.out.println(hit);
         }
         hits[tiles.indexOf(tile)] = true;
-
         for (boolean hit : hits) {
             System.out.println(hit);
         }
@@ -134,7 +137,13 @@ public class Boat {
         }
         sunk = is_sunk;
     }
-
+    public void heal(Tile tile) {
+        tile.removeBurning();
+        tile.removeHit();
+        hits[tiles.indexOf(tile)] = false;
+        sunk = false;
+        display = false;
+    }
     public boolean[] getHits() { return hits; }
 
     public void show() {
@@ -146,4 +155,7 @@ public class Boat {
         }
     }
 
+    public void expose(Tile targetTile) {
+        targetTile.exposed();
+    }
 }

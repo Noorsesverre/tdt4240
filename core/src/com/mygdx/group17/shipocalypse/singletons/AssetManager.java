@@ -2,21 +2,16 @@ package com.mygdx.group17.shipocalypse.singletons;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.group17.shipocalypse.models.Options;
 
@@ -34,7 +29,8 @@ public class AssetManager {
     public static Sprite cross_sprite;
     public static Texture crosshair_texture;
     public static Sprite crosshair_sprite;
-
+    public static Texture exclamation_point_texture;
+    public static Sprite exclamation_point_sprite;
     public static Skin skin;
     public static TextureAtlas atlas;
     private static AssetManager single_instance = null;
@@ -54,7 +50,8 @@ public class AssetManager {
         skin = new Skin(Gdx.files.internal("skin.json"), atlas);
         ship_textures = new ArrayList(List.of(new Texture("ship1_small.png"), new Texture("ship2_small.png"), new Texture("ship3_small.png"), new Texture("ship4_small.png")));
         ship_sprites = new ArrayList();
-
+        exclamation_point_texture = new Texture("exclamation_point.png");
+        exclamation_point_sprite = new Sprite(exclamation_point_texture);
         for (Texture ship : ship_textures) {
             ship_sprites.add(new Sprite(ship));
         }
@@ -124,4 +121,10 @@ public class AssetManager {
 
     }
 
+    public static void text(String text, float pos_x, float pos_y) {
+        BitmapFont bf = new BitmapFont();
+        batch.begin();
+        bf.draw(batch, text, pos_x, pos_y);
+        batch.end();
+    }
 }

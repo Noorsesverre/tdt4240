@@ -13,19 +13,21 @@ import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
 import com.mygdx.group17.shipocalypse.models.State;
 
-public class MenuButton extends Button{
+public class MenuButton extends Button {
 
-    public static final int BUTTON_WIDTH = 150;
-    public static final int BUTTON_HEIGHT = 75;
     private Object value;
     private Color color = Color.RED;
 
-    public MenuButton(ShapeRenderer shape, int x, int y, String text, Action action) {
-        super(shape, x, y, text, action);
+    public MenuButton(ShapeRenderer shape, int x, int y, String text,  int width) {
+        super(shape, x, y, text, width);
+
+    }
+    public MenuButton(ShapeRenderer shape, int x, int y, String text) {
+        super(shape, x, y, text);
     }
 
-    public MenuButton(ShapeRenderer shape, int x, int y, String tekst, Action action, Object v) {
-        super(shape, x, y, tekst, action);
+    public MenuButton(ShapeRenderer shape, int x, int y, String tekst, Object v) {
+        super(shape, x, y, tekst);
         this.value = v;
     }
 
@@ -44,34 +46,6 @@ public class MenuButton extends Button{
             Rectangle touch_rectangle = new Rectangle(projected_vector.x - 2, projected_vector.y - 2, 4, 4);
 
             if (touch_rectangle.overlaps(this.get_rectangle())) {
-                switch (this.get_action()) {
-                    case hostGame:
-                        GameManager.setState(State.host);
-                        break;
-                    case joinGame:
-                        GameManager.setState(State.join);
-                        break;
-                    case exit:
-                        System.exit(0);
-                        break;
-                    case selectOption:
-                        System.out.println("selected option");
-                        break;
-                    case test:
-                        System.out.println("This is a test action");
-                        break;
-                    case createGame:
-                        System.out.println("Game is being created");
-                        break;
-                    case readyGame:
-                        System.out.println("Game is being started");
-                        break;
-                    case mainMenu:
-                        GameManager.setState(State.menu);
-                        break;
-                    default:
-                        throw new RuntimeException("Couldn't find action-type");
-                }
                 return true;
             }
         }

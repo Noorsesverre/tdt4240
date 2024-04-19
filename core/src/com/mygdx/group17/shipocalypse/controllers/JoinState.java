@@ -28,7 +28,7 @@ public class JoinState extends GameState {
         AssetManager.batch.draw(title, 300, Options.GAME_HEIGHT - 200);
         AssetManager.batch.end();
 
-        start_button.render(AssetManager.batch);
+        start_button.render();
     }
 
     @Override

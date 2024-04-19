@@ -1,7 +1,7 @@
 package com.mygdx.group17.shipocalypse.models;
 
-import com.mygdx.group17.shipocalypse.models.Options;
 
+import java.util.ArrayList;
 
 public class Grid {
 
@@ -52,8 +52,44 @@ public class Grid {
         return _tiles;
     }
 
+    public Tile get_tile(int x, int y) { return _tiles[x][y]; }
 
     public int getSize() { return _tiles.length; }
 
 
+    public ArrayList<Tile> get_surrounding_tiles(Tile center_tile) {
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+
+        tiles.add(center_tile);
+
+        for (Tile tile : center_tile.getAdjacentTiles()) {
+            tiles.add(tile);
+        }
+
+        // NOTE: Lazy mans way of avoiding out of range index errors
+        try {
+            tiles.add(_tiles[center_tile._index_x - 1][center_tile._index_y + 1]);
+        } catch (Exception e){ }
+
+        try {
+            tiles.add(_tiles[center_tile._index_x - 1][center_tile._index_y - 1]);
+
+        } catch (Exception e){ }
+
+        try {
+            tiles.add(_tiles[center_tile._index_x + 1][center_tile._index_y + 1]);
+        } catch (Exception e){ }
+
+        try {
+            tiles.add(_tiles[center_tile._index_x + 1][center_tile._index_y - 1]);
+        } catch (Exception e){ }
+
+        return tiles;
+    }
+
+    public Tile get_random_tile() {
+        int random_x = (int) (Math.random() * getSize());
+        int random_y = (int) (Math.random() * getSize());
+        return _tiles[random_x][random_y];
+    }
 }
