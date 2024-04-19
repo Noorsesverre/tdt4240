@@ -7,15 +7,18 @@ import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Boat {
+
     public boolean display = false;
+
     public int _posx;
     public int _posy;
     public int _boatSize;
     public boolean _isVertical = false;
     public Texture _texture;
-    private ArrayList<Boolean> hits;
+    private boolean[] hits;
     private boolean sunk;
     private ArrayList<Tile> tiles;
 
@@ -23,7 +26,7 @@ public class Boat {
         _posx = posx;
         _posy = posy;
         _boatSize = boatSize;
-        hits = new ArrayList<Boolean>();
+        hits = new boolean[_boatSize];
         sunk = false;
         _texture = FindCorrectTexture(boatSize);
     }
@@ -83,6 +86,7 @@ public class Boat {
     }
 
     public ArrayList<Tile> getTiles() {
+
         return tiles;
     }
 
@@ -110,14 +114,17 @@ public class Boat {
         }
     }
 
+    public boolean containsTile(Tile tile) {
+        return tiles.contains(tile);
+    }
+
     public boolean isSunk() { return sunk; }
     public void hit(Tile tile) {
         tile.setBurning();
         for (boolean hit : hits) {
             System.out.println(hit);
         }
-        getHits_aslist()[tiles.indexOf(tile)] = true;
-
+        hits[tiles.indexOf(tile)] = true;
         for (boolean hit : hits) {
             System.out.println(hit);
         }
@@ -130,14 +137,14 @@ public class Boat {
         }
         sunk = is_sunk;
     }
-
-    public boolean[] getHits_aslist() {
-        boolean[] h = new boolean[hits.size()];
-        for (boolean hit : hits) {
-            h[hits.indexOf(hit)] = hit;
-        }
-        return h;
+    public void heal(Tile tile) {
+        tile.removeBurning();
+        tile.removeHit();
+        hits[tiles.indexOf(tile)] = false;
+        sunk = false;
+        display = false;
     }
+    public boolean[] getHits() { return hits; }
 
     public void show() {
         display = true;
@@ -148,33 +155,7 @@ public class Boat {
         }
     }
 
-    // FOLLOWING IS REQUIRED FOR FIREBASE SERIALIZATION
-    // These methods are not used directly by our app, but must exist.
-    public Boat() {}
-
-    public boolean getDisplay() { return display; }
-    public int get_posx() { return _posx; }
-    public int get_posy() { return _posy; }
-    public int get_boatSize() { return _boatSize; }
-    public boolean get_isVertical() { return _isVertical; }
-    public Texture get_texture() { return _texture; }
-    public ArrayList<Boolean> getHits() {
-        return new ArrayList<Boolean>() {
-            {
-                for (boolean hit : hits) {
-                    add(hit);
-                }
-            }
-        };
+    public void expose(Tile targetTile) {
+        targetTile.exposed();
     }
-    public void setDisplay(boolean _display) { display = _display; }
-    public void set_posx(int posx) { _posx = posx; }
-    public void set_posy(int posy) { _posy = posy; }
-    public void set_boatSize(int boatSize) { _boatSize = boatSize; }
-    public void set_isVertical(boolean isVertical) { _isVertical = isVertical; }
-    public void set_texture(Texture texture) { _texture = texture; }
-    public void setHits(ArrayList<Boolean> _hits) { hits = _hits; }
-    public void setSunk(boolean _sunk) { sunk = _sunk; }
-    public void setTiles(ArrayList<Tile> _tiles) { tiles = _tiles; }
-
 }

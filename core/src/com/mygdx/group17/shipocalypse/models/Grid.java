@@ -1,14 +1,11 @@
 package com.mygdx.group17.shipocalypse.models;
 
-import com.mygdx.group17.shipocalypse.models.Options;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 
 public class Grid {
 
-    public Tile[][] _tiles;
+    private Tile[][] _tiles;
     public int GRID_POS_X;
     public int GRID_POS_Y;
     public static final int GRID_GAP = 2;
@@ -50,35 +47,49 @@ public class Grid {
             }
         }
     }
-    public Tile[][] get_tiles_aslist() { return _tiles; }
 
-
-    // FOLLOWING IS REQUIRED FOR FIREBASE SERIALIZATION
-    // These methods are not used directly by our app, but must exist.
-    public Grid() {}
-    public ArrayList<ArrayList<Tile>> get_tiles() {
-        return new ArrayList<ArrayList<Tile>>() {
-            {
-                for (Tile[] tileset : _tiles) {
-                    add(new ArrayList<Tile>() {
-                        {
-                            this.addAll(Arrays.asList(tileset));
-                        }
-                    });
-                }
-            }
-        };
+    public Tile[][] get_tiles() {
+        return _tiles;
     }
-    public int getGRID_POS_X() { return GRID_POS_X; }
-    public int getGRID_POS_Y() { return GRID_POS_Y; }
-    public void set_tiles(ArrayList<ArrayList<Tile>> tiles) {
-        for (int x = 0; x < tiles.size(); x++) {
-            for (int y = 0; y < tiles.size(); y++) {
-                _tiles[x][y] = tiles.get(x).get(y);
-            }
+
+    public Tile get_tile(int x, int y) { return _tiles[x][y]; }
+
+    public int getSize() { return _tiles.length; }
+
+
+    public ArrayList<Tile> get_surrounding_tiles(Tile center_tile) {
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
+
+        tiles.add(center_tile);
+
+        for (Tile tile : center_tile.getAdjacentTiles()) {
+            tiles.add(tile);
         }
-    }
-    public void setGRID_POS_X(int _GRID_POS_X) { GRID_POS_X = _GRID_POS_X; }
-    public void setGRID_POS_Y(int _GRID_POS_Y) { GRID_POS_Y = _GRID_POS_Y; }
 
+        // NOTE: Lazy mans way of avoiding out of range index errors
+        try {
+            tiles.add(_tiles[center_tile._index_x - 1][center_tile._index_y + 1]);
+        } catch (Exception e){ }
+
+        try {
+            tiles.add(_tiles[center_tile._index_x - 1][center_tile._index_y - 1]);
+
+        } catch (Exception e){ }
+
+        try {
+            tiles.add(_tiles[center_tile._index_x + 1][center_tile._index_y + 1]);
+        } catch (Exception e){ }
+
+        try {
+            tiles.add(_tiles[center_tile._index_x + 1][center_tile._index_y - 1]);
+        } catch (Exception e){ }
+
+        return tiles;
+    }
+
+    public Tile get_random_tile() {
+        int random_x = (int) (Math.random() * getSize());
+        int random_y = (int) (Math.random() * getSize());
+        return _tiles[random_x][random_y];
+    }
 }

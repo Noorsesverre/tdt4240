@@ -19,7 +19,7 @@ public class GameEndState extends GameState {
     @Override
     public void render() {
         AssetManager.draw(result, Options.GAME_WIDTH / 2 - AssetManager.title.getWidth() / 2, 200);
-        main_menu_button.render(AssetManager.batch);
+        main_menu_button.render();
     }
     @Override
     public void dispose() {

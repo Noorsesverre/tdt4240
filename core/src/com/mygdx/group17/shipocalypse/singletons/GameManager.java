@@ -1,47 +1,33 @@
 package com.mygdx.group17.shipocalypse.singletons;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import com.mygdx.group17.shipocalypse.FirebaseInterface;
 import com.mygdx.group17.shipocalypse.models.*;
 import com.mygdx.group17.shipocalypse.controllers.*;
 import com.mygdx.group17.shipocalypse.Shipocalypse;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class GameManager {
     private static GameManager single_instance = null;
     private static GameState playState;
     private static GameConfig configuration;
-    private static Player player;
-    private static Player opponent;
-    private static Preferences saved; // used for storing an ID on the device
-    private static Game game_to_configure;
-    private static String user_id; // fetched from firebase
-    private static ArrayList<String> game_id; // fetched from firebase
+    private static ArrayList<Player> players;
+    private static Player active_player; // The players that is has their turn
     private static boolean touching = false; // Used to avoid the same touch triggering twice.
-
-    private static FirebaseInterface firebase;
-
     private GameManager(Shipocalypse _shipocalypse) {
         AssetManager.getInstance();
-        saved = Gdx.app.getPreferences("saved");
+        this.players = new ArrayList<Player>() {};
     }
-
-    public void setPlayer(Player _player) {
-        player = _player;
-    }
-    public void setOpponent(Player _opponent) { opponent = _opponent; }
-
-
+    public static void addPlayer(Player new_player) { players.add(new_player); }
+    public static Player getActive_player() { return active_player; };
     public static void init(Shipocalypse _shipocalypse) {
         if (single_instance != null) {
             throw new RuntimeException("GameManager already initialized");
@@ -82,9 +68,14 @@ public class GameManager {
 
     public static void createGame(int gridX, int gridY, Map<Integer, Integer> boats) {
         GameConfig config = new GameConfig(gridX, gridY, boats);
-        String game_id = UUID.randomUUID().toString().substring(0,8); // pseudo-random gameID
-        game_to_configure = new Game(user_id, game_id);
-        firebase.hostGame(game_to_configure);
+        Player player = new Player(config.getGrid_x(), config.getGrid_y(), new BoatConfiguration(), "1");
+        GameManager.addPlayer(player);
+
+        // TODO: Implement opponent logic instead of skipable character
+        Player opponent = new Player(config.getGrid_x(), config.getGrid_y(), new BoatConfiguration(), "2", true);
+        GameManager.addPlayer(opponent);
+
+        active_player = getPlayer("1");
         playState = new ConfigureState(config);
     }
 
@@ -110,8 +101,8 @@ public class GameManager {
         if (Gdx.input.isTouched()) {
             Vector3 input_vector = AssetManager.unprojectInput(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             debugCursor(input_vector.x, input_vector.y, Color.GREEN);
-            firebase.writeToDatabase("kaitest", new HashMap<String, Object>());
         }
+
         playState.render();
     }
 
@@ -127,32 +118,32 @@ public class GameManager {
         return touching;
     }
 
-    public static void setConfig(GameConfig config, Player pl, Player opp) {
-        player = pl;
-        game_to_configure.addPlayer(player, 0);
-        firebase.updateGame(game_to_configure);
-        opponent = opp;
+    public static void setConfig(GameConfig config) {
         configuration = config;
     }
 
-    public static Player getOpponent() { return opponent; }
-
-    public static Player getPlayer() { return player; }
+    public static Player getPlayer(String id) {
+        for (Player player : players ){
+            if (player.getPlayer_id().equals(id)) {
+                return player;
+            }
+        }
+        throw new RuntimeException("Kunne ikke finne en spiller med id " + id + " i listen " + players);
+    }
     public static GameConfig getConfig() { return configuration; }
 
-    public static void setFirebase(FirebaseInterface firebase_interface) {
-        firebase = firebase_interface;
-        String uniqueID;
-        if (!saved.contains("ID")) {
-            uniqueID = UUID.randomUUID().toString(); // Generate a random ID
-            saved.putString("ID", uniqueID); // Save it for later
-            saved.flush();
-        } else {
-            uniqueID = saved.getString("ID");
+    public static void endTurn() {
+        // Find the non-playing player
+        Player non_playing_player = null;
+        for (Player player : players) {
+            if (active_player.getPlayer_id() != player.getPlayer_id()) {
+                non_playing_player = player;
+            }
         }
-        firebase.addUser(uniqueID); // Will only add user if user does not already exist in firebase
-        user_id = uniqueID;
+
+        active_player = non_playing_player;
     }
+
 
 
 }
