@@ -97,7 +97,7 @@ public class HostState extends GameState {
         }
         if (start_button.handleInput()) {
             System.out.println(selected_options);
-            GameManager.createGame((int)selected_options.get("grids"), (int)selected_options.get("grids"), (Map<Integer,Integer>)selected_options.get("boats"));
+            GameManager.createGame(selected_options);
         }
     }
 }

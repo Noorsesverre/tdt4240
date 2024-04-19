@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.group17.shipocalypse.models.Boat;
 import com.mygdx.group17.shipocalypse.models.Grid;
 import com.mygdx.group17.shipocalypse.models.Options;
@@ -24,11 +25,10 @@ public class PlayState extends GameState {
     public static boolean selection = false;
     Tile selected_tile;
     public MenuButton fire_button;
-
     public ArrayList<MissileButton> missile_buttons;
     public MissileButton selected_missile_button;
+    public boolean waiting = true;
     private String selected_player_id;
-
     public PlayState() {
         missile_buttons = new ArrayList<MissileButton>() {};
         missile_buttons.add(new MissileButton(AssetManager.shape, 50, 100, 75, MissileType.Normal));
@@ -76,6 +76,9 @@ public class PlayState extends GameState {
 
     @Override
     public void render() {
+        if (waiting) {
+
+        }
 
         for (Tile[] list : GameManager.getPlayer("2").get_grid().get_tiles()) {
             for (Tile tile : list) {
@@ -159,189 +162,194 @@ public class PlayState extends GameState {
 
     @Override
     public void handleInput() {
-        // TODO: Make this waiting until other player is done
-        while (GameManager.getActive_player().is_skipable_player()) {
-            GameManager.getPlayer("1").hit_random_tile();
-            GameManager.getPlayer("1").checkDefeat();
-            if (GameManager.getPlayer(("1")).allShipsSunk()) {
-                GameManager.setState(State.gameEnd);
-            }
-            GameManager.endTurn();
-        }
+        if (waiting) {
+            // TODO: Make this waiting until other player is done
 
-        for (MissileButton missileButton : missile_buttons) {
-            if (missileButton.handleInput()) {
-                selected_missile_button = missileButton;
-                if (!selected_missile_button.can_fire()) {
-                    selected_missile_button = null;
+        } else {
+
+            while (GameManager.getActive_player().is_skipable_player()) {
+                GameManager.getPlayer("1").hit_random_tile();
+                GameManager.getPlayer("1").checkDefeat();
+                if (GameManager.getPlayer(("1")).allShipsSunk()) {
+                    GameManager.setState(State.gameEnd);
+                }
+                GameManager.endTurn();
+            }
+
+            for (MissileButton missileButton : missile_buttons) {
+                if (missileButton.handleInput()) {
+                    selected_missile_button = missileButton;
+                    if (!selected_missile_button.can_fire()) {
+                        selected_missile_button = null;
+                    }
                 }
             }
-        }
 
-        if (Gdx.input.isTouched()) {
-            // player should not be able to select target tile on triple *random*
-            if(selected_missile_button != null && selected_missile_button.getMissileType() != MissileType.TripleRandom) {
-                int input_x = Gdx.input.getX();
-                int input_y = Options.GAME_HEIGHT - Gdx.input.getY();
-                Rectangle touch_rectangle = new Rectangle(input_x - 2, input_y - 2, 4, 4);
+            if (Gdx.input.isTouched()) {
+                // player should not be able to select target tile on triple *random*
+                if(selected_missile_button != null && selected_missile_button.getMissileType() != MissileType.TripleRandom) {
 
-                Grid grid = selected_missile_button.getMissileType() == MissileType.Healing ?
-                        GameManager.getPlayer("1").get_grid()
-                        :
-                        GameManager.getPlayer("2").get_grid();
+                    Vector3 input_vector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                    Vector3 projected_vector = AssetManager.unprojectInput(input_vector);
+                    Rectangle touch_rectangle = new Rectangle(projected_vector.x - 2, projected_vector.y - 2, 2, 2);
+                    Grid grid = selected_missile_button.getMissileType() == MissileType.Healing ?
+                            GameManager.getPlayer("1").get_grid()
+                            :
+                            GameManager.getPlayer("2").get_grid();
 
-                // Check if our currently selected tile is in the grid applicable to the
-                // currently selected missile.
-                if (selected_tile != null) {
-                    boolean tile_found_in_applicable_grid = false;
-                    for (Tile[] tiles : grid.get_tiles()) {
-                        for (Tile tile : tiles) {
-                            if (tile == selected_tile) {
-                                tile_found_in_applicable_grid = true;
+                    // Check if our currently selected tile is in the grid applicable to the
+                    // currently selected missile.
+                    if (selected_tile != null) {
+                        boolean tile_found_in_applicable_grid = false;
+                        for (Tile[] tiles : grid.get_tiles()) {
+                            for (Tile tile : tiles) {
+                                if (tile == selected_tile) {
+                                    tile_found_in_applicable_grid = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!tile_found_in_applicable_grid) {
+                            selected_tile.deselect();
+                            selection = false;
+                            selected_tile = null;
+                        }
+                    }
+
+                    for (Tile[] list : grid.get_tiles()) {
+                        for (Tile tile : list) {
+                            if (touch_rectangle.overlaps(tile.get_rectangle())) {
+                                if (selected_tile != null) {
+                                    selected_tile.deselect();
+                                }
+                                if (selected_missile_button.getMissileType() != MissileType.Healing && !tile.isHit()) {
+                                    tile.select();
+                                    selected_tile = tile;
+                                    selection = true;
+                                } else if (selected_missile_button.getMissileType() == MissileType.Healing && tile.isHit()) {
+                                    for (Boat boat:  GameManager.getPlayer("1").getBoatConfig().boats) {
+                                        if (boat.containsTile(tile)) {
+                                            tile.select();
+                                            selected_tile = tile;
+                                            selection = true;
+                                            break;
+                                        }
+                                    }
+                                }
                                 break;
                             }
                         }
                     }
-                    if (!tile_found_in_applicable_grid) {
+                } else if (selected_missile_button != null && selected_missile_button.getMissileType() == MissileType.TripleRandom) {
+                    if (selected_tile != null) {
                         selected_tile.deselect();
-                        selection = false;
-                        selected_tile = null;
                     }
+                    selected_tile = null;
+                    selection = false;
                 }
 
-                for (Tile[] list : grid.get_tiles()) {
+                for (Tile[] list : GameManager.getPlayer("2").get_grid().get_tiles()) {
                     for (Tile tile : list) {
-                        if (touch_rectangle.overlaps(tile.get_rectangle())) {
-                            if (selected_tile != null) {
-                                selected_tile.deselect();
-                            }
-                            if (selected_missile_button.getMissileType() != MissileType.Healing && !tile.isHit()) {
-                                tile.select();
-                                selected_tile = tile;
-                                selection = true;
-                            } else if (selected_missile_button.getMissileType() == MissileType.Healing && tile.isHit()) {
-                                for (Boat boat:  GameManager.getPlayer("1").getBoatConfig().boats) {
-                                    if (boat.containsTile(tile)) {
-                                        tile.select();
-                                        selected_tile = tile;
-                                        selection = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
+                        if (tile == selected_tile) {
+                            tile.select();
+                        }
+                        else {
+                            tile.deselect();
                         }
                     }
                 }
-            } else if (selected_missile_button != null && selected_missile_button.getMissileType() == MissileType.TripleRandom) {
-                if (selected_tile != null) {
-                    selected_tile.deselect();
-                }
-                selected_tile = null;
-                selection = false;
-            }
 
-            for (Tile[] list : GameManager.getPlayer("2").get_grid().get_tiles()) {
-                for (Tile tile : list) {
-                    if (tile == selected_tile) {
-                        tile.select();
+                if (fire_button.handleInput() && selected_missile_button != null  && selected_missile_button.can_fire()) {
+                    // end_turn: A boolean for ensuring that a turn doesn't end unless a shot is confirmed.
+                    // Used for cases like healing missile where missing is not permitted, such that the turn doesnt end.
+                    boolean end_turn = false;
+
+                    if (selection) {
+                        System.out.println("Fired " + selected_missile_button.getMissileType().name() + " at tile " + String.valueOf(selected_tile.getIndex()[0]) + " : " + String.valueOf(selected_tile.getIndex()[1]));
+                        if (selected_missile_button.getMissileType() == MissileType.Normal) {
+                            end_turn = true;
+                            for (Boat boat: GameManager.getPlayer("2").getBoatConfig().boats) {
+                                for (Tile tile : boat.getTiles()) {
+                                    if (selected_tile == tile) {
+                                        boat.hit(tile);
+                                        if (boat.isSunk()) {
+                                            boat.show();
+                                        }
+                                    }
+                                    selected_tile.hit();
+                                }
+                            }
+                        }
+
+                        if (selected_missile_button.getMissileType() == MissileType.Vision) {
+                            end_turn = true;
+                            // get all tiles around selected
+                            ArrayList<Tile> surrounding_tiles = GameManager.getPlayer("2").get_grid().get_surrounding_tiles(selected_tile);
+
+                            for (Tile target_tile : surrounding_tiles) {
+                                for (Boat boat: GameManager.getPlayer("2").getBoatConfig().boats) {
+                                    for (Tile boat_tile : boat.getTiles()) {
+                                        if (boat_tile == target_tile) {
+                                            target_tile.exposed();
+                                        } /*else {
+                                            target_tile.hit();
+                                        } causes issues */
+                                    }
+                                }
+                            }
+                        }
+
+                        if (selected_missile_button.getMissileType() == MissileType.Healing) {
+                            for (Boat boat: GameManager.getPlayer("1").getBoatConfig().boats) {
+                                for (Tile boat_tile: boat.getTiles()) {
+                                    if (boat_tile == selected_tile) {
+                                        end_turn = true;
+                                        boat.heal(boat_tile);
+                                    }
+                                }
+                            }
+                        }
+                        if (end_turn) {
+                            selected_tile.deselect();
+                            selected_tile = null;
+                            selection = false;
+                        }
                     }
-                    else {
-                        tile.deselect();
-                    }
-                }
-            }
 
-            if (fire_button.handleInput() && selected_missile_button != null  && selected_missile_button.can_fire()) {
-                // end_turn: A boolean for ensuring that a turn doesn't end unless a shot is confirmed.
-                // Used for cases like healing missile where missing is not permitted, such that the turn doesnt end.
-                boolean end_turn = false;
-
-                if (selection) {
-                    System.out.println("Fired " + selected_missile_button.getMissileType().name() + " at tile " + String.valueOf(selected_tile.getIndex()[0]) + " : " + String.valueOf(selected_tile.getIndex()[1]));
-                    if (selected_missile_button.getMissileType() == MissileType.Normal) {
+                    if (selected_missile_button.getMissileType() == MissileType.TripleRandom) {
                         end_turn = true;
+                        // Generate 3 random tiles
+                        Tile[] random_tiles = {null, null, null};
+                        Grid grid = GameManager.getPlayer("2").get_grid();
+                        for (int i = 0; i < 3; i++) {
+                            random_tiles[i] = grid.get_random_tile();
+                            // Hit here to avoid calling the hit function many times
+                            // on each random tile in the later loop.
+                            random_tiles[i].hit();
+                        }
+                        // Check for a hit on any of the random tiles.
                         for (Boat boat: GameManager.getPlayer("2").getBoatConfig().boats) {
-                            for (Tile tile : boat.getTiles()) {
-                                if (selected_tile == tile) {
-                                    boat.hit(tile);
+                            for (Tile boat_tile: boat.getTiles()) {
+                                if (Arrays.asList(random_tiles).contains(boat_tile)) {
+                                    boat.hit(boat_tile);
                                     if (boat.isSunk()) {
                                         boat.show();
                                     }
-                                }
-                                selected_tile.hit();
-                            }
-                        }
-                    }
-
-                    if (selected_missile_button.getMissileType() == MissileType.Vision) {
-                        end_turn = true;
-                        // get all tiles around selected
-                        ArrayList<Tile> surrounding_tiles = GameManager.getPlayer("2").get_grid().get_surrounding_tiles(selected_tile);
-
-                        for (Tile target_tile : surrounding_tiles) {
-                            for (Boat boat: GameManager.getPlayer("2").getBoatConfig().boats) {
-                                for (Tile boat_tile : boat.getTiles()) {
-                                    if (boat_tile == target_tile) {
-                                        target_tile.exposed();
-                                    } /*else {
-                                        target_tile.hit();
-                                    } causes issues */
-                                }
-                            }
-                        }
-                    }
-
-                    if (selected_missile_button.getMissileType() == MissileType.Healing) {
-                        for (Boat boat: GameManager.getPlayer("1").getBoatConfig().boats) {
-                            for (Tile boat_tile: boat.getTiles()) {
-                                if (boat_tile == selected_tile) {
-                                    end_turn = true;
-                                    boat.heal(boat_tile);
                                 }
                             }
                         }
                     }
                     if (end_turn) {
-                        selected_tile.deselect();
-                        selected_tile = null;
-                        selection = false;
+                        selected_missile_button.use_ammunition();
+                        selected_missile_button = null;
+                        GameManager.endTurn();
                     }
-                }
-
-                if (selected_missile_button.getMissileType() == MissileType.TripleRandom) {
-                    end_turn = true;
-                    // Generate 3 random tiles
-                    Tile[] random_tiles = {null, null, null};
-                    Grid grid = GameManager.getPlayer("2").get_grid();
-                    for (int i = 0; i < 3; i++) {
-                        random_tiles[i] = grid.get_random_tile();
-                        // Hit here to avoid calling the hit function many times
-                        // on each random tile in the later loop.
-                        random_tiles[i].hit();
-                    }
-                    // Check for a hit on any of the random tiles.
-                    for (Boat boat: GameManager.getPlayer("2").getBoatConfig().boats) {
-                        for (Tile boat_tile: boat.getTiles()) {
-                            if (Arrays.asList(random_tiles).contains(boat_tile)) {
-                                boat.hit(boat_tile);
-                                if (boat.isSunk()) {
-                                    boat.show();
-                                }
-                            }
-                        }
-                    }
-                }
-                if (end_turn) {
-                    selected_missile_button.use_ammunition();
-                    selected_missile_button = null;
-                    GameManager.endTurn();
                 }
             }
-        }
-        GameManager.getPlayer("2").checkDefeat();
-        if (GameManager.getPlayer(("2")).allShipsSunk()) {
-            GameManager.setState(State.gameEnd);
+            GameManager.getPlayer("2").checkDefeat();
+            if (GameManager.getPlayer(("2")).allShipsSunk()) {
+                GameManager.setState(State.gameEnd);
+            }
         }
     }
 }

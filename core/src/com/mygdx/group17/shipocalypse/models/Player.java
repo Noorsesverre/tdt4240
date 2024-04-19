@@ -10,7 +10,6 @@ public class Player {
     private BoatConfiguration boat_configuration;
     private String player_id;
     private boolean skipable_player;
-
     public boolean is_skipable_player() {
         return skipable_player;
     }
@@ -28,12 +27,12 @@ public class Player {
         this.player_id = player_id;
         this.skipable_player = is_skipable;
     }
-
+    public Player(int gridSizeX, int gridSizeY) {
+        grid = new Grid(gridSizeX, gridSizeY);
+    }
     public Grid get_grid() {
         return grid;
     }
-
-
     public void checkDefeat() {
         boolean isDefeated = true;
         for (Boat boat : boat_configuration.boats) {
@@ -44,7 +43,6 @@ public class Player {
         }
         defeated = isDefeated;
     }
-
     public void hit_random_tile() {
         boolean found_tile = false;
         while (!found_tile) {
@@ -68,19 +66,15 @@ public class Player {
             }
         }
     }
-
     public boolean allShipsSunk() {
         return defeated;
     }
-
     public void setBoatConfig(BoatConfiguration boatconfig) {
         boat_configuration = boatconfig;
     }
-
     public BoatConfiguration getBoatConfig() {
         return boat_configuration;
     }
-
     public int getGridSize() {
         return grid.getSize();
     }
