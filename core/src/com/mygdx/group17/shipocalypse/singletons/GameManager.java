@@ -21,8 +21,10 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class GameManager {
 
-    public static boolean single_player = false;
+    public static int result;
 
+    public static long turntime;
+    public static boolean single_player = false;
     private static String current_game_id;
     private static Preferences saved; // used for storing an ID on the device
     private static String user_id; // fetched from firebase
@@ -35,6 +37,7 @@ public class GameManager {
     private static Player active_player; // The players that is has their turn
     private static boolean touching = false; // Used to avoid the same touch triggering twice.
     private GameManager(Shipocalypse _shipocalypse) {
+        result = 0;
         AssetManager.getInstance();
         this.players = new ArrayList<Player>() {};
         saved = Gdx.app.getPreferences("saved");
@@ -92,9 +95,11 @@ public class GameManager {
     public static void createGame(HashMap<String, Object> options) {
         int grids = (int)options.get("grids");
         Map<Integer, Integer> boats = (Map)options.get("boats");
+        int time = (int)options.get("times");
         setupMode = 1;
 
         GameConfig config = new GameConfig(grids, grids, boats);
+        turntime = time;
         Player player = new Player(config.getGrid_x(), config.getGrid_y(), new BoatConfiguration(), "1");
         GameManager.addPlayer(player);
 
@@ -112,12 +117,14 @@ public class GameManager {
     public static void joinGame(String game_id, HashMap<String, Object> options) {
         int grids = (int)options.get("grids");
         Map<Integer, Integer> boats = (Map)options.get("boats");
+        int time = (int)options.get("times");
 
         firebase.joinGame(game_id, user_id);
 
         setupMode = 2; // 2 is joining
 
         GameConfig config = new GameConfig(grids, grids, boats);
+        turntime = time;
         Player player = new Player(config.getGrid_x(), config.getGrid_y(), new BoatConfiguration(), "1");
         GameManager.addPlayer(player);
         current_game_id = game_id;
@@ -176,9 +183,21 @@ public class GameManager {
     }
 
     public static void setConfig(GameConfig config) {
-        Player opponent = opponentFromEncodedInfo(firebase.getOpponentInfo(current_game_id), config.getGrid_x());
-        addPlayer(opponent);
+        if (!single_player) {
+            Player opponent = opponentFromEncodedInfo(firebase.getOpponentInfo(current_game_id), config.getGrid_x());
+            addPlayer(opponent);
+        } else {
+            firebase.removeGame(current_game_id);
+        }
         configuration = config;
+    }
+
+    public static void win() {
+        result = 1;
+    }
+    public static void loss() {
+        result = -1;
+
     }
 
     public static Player getPlayer(String id) {
@@ -192,7 +211,9 @@ public class GameManager {
     public static GameConfig getConfig() { return configuration; }
 
     public static void endTurn(HashMap<Object, Object> turn_info) {
-        firebase.postTurnInfo(current_game_id, user_id, turn_info);
+        if (!single_player) {
+            firebase.postTurnInfo(current_game_id, user_id, turn_info);
+        }
         // Find the non-playing player
         Player non_playing_player = null;
         for (Player player : players) {
@@ -204,6 +225,17 @@ public class GameManager {
         active_player = non_playing_player;
     }
 
+    public static void endTurn() {
+        // Find the non-playing player
+        Player non_playing_player = null;
+        for (Player player : players) {
+            if (active_player.getPlayer_id() != player.getPlayer_id()) {
+                non_playing_player = player;
+            }
+        }
+
+        active_player = non_playing_player;
+    }
     public static HashMap<String, Object> getLastTurn() {
         return firebase.getTurnInfo(current_game_id);
     }

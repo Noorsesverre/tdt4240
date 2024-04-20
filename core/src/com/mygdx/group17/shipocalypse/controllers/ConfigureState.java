@@ -34,6 +34,8 @@ public class ConfigureState extends GameState {
 
     private final MenuButton ready_button;
 
+    private final MenuButton computer_button;
+
     public ConfigureState(GameConfig configuration) {
         gameconfig = configuration;
 
@@ -41,6 +43,7 @@ public class ConfigureState extends GameState {
         float buttonGameCenter = Options.GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
         SetBoatButtons();
         this.ready_button = new MenuButton(AssetManager.shape, (int)buttonGameCenter, 100, "ready", Action.readyGame);
+        this.computer_button = new MenuButton(AssetManager.shape, (int)buttonGameCenter, 100, "play\ncomputer", Action.readyGame);
     }
 
     private void SetBoatButtons() {
@@ -116,7 +119,8 @@ public class ConfigureState extends GameState {
         } else {
             String text = "WAITING FOR OPPONENT";
 
-            AssetManager.write(text, Options.GAME_WIDTH/2 - 50, Options.GAME_HEIGHT/2);
+            AssetManager.write(text, Options.GAME_WIDTH/2 - 100, Options.GAME_HEIGHT/2);
+            computer_button.render();
 
         }
 
@@ -265,8 +269,15 @@ public class ConfigureState extends GameState {
 
         } else {
             if (GameManager.bothPlayersReady()) {
+                GameManager.single_player = false;
                 GameManager.setConfig(gameconfig);
                 GameManager.setState(State.play);
+            } else {
+                if (computer_button.handleInput()) {
+                    GameManager.single_player = true;
+                    GameManager.setConfig(gameconfig);
+                    GameManager.setState(State.play);
+                }
             }
         }
     }

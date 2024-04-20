@@ -46,15 +46,16 @@ public class Player {
         }
         defeated = isDefeated;
     }
-    public void hit_random_tile() {
+    public Tile hit_random_tile() {
         boolean found_tile = false;
+        Tile chosen_one = new Tile(0,0,0,0);
         while (!found_tile) {
             int random_x = (int) (Math.random() * grid.getSize());
             int random_y = (int) (Math.random() * grid.getSize());
 
             System.out.print("Random hit (" + random_x + ", " + random_y+")");
 
-            Tile chosen_one = grid.get_tiles()[random_x][random_y];
+            chosen_one = grid.get_tiles()[random_x][random_y];
 
             if (!chosen_one.isHit() || !chosen_one.isExposed()) {
                 grid.get_tiles()[random_x][random_y].hit();
@@ -68,6 +69,7 @@ public class Player {
                 }
             }
         }
+        return chosen_one;
     }
     public boolean allShipsSunk() {
         return defeated;

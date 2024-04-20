@@ -23,9 +23,9 @@ import java.util.UUID;
 public class AndroidFirebase implements FirebaseInterface{
 
     private FirebaseDatabase db;
-    private String reference_url = "https://shipocalypse-tdt4240-default-rtdb.europe-west1.firebasedatabase.app/";
 
     public AndroidFirebase() {
+        String reference_url = "https://shipocalypse-tdt4240-default-rtdb.europe-west1.firebasedatabase.app/";
         db = FirebaseDatabase.getInstance(reference_url);
     }
     @Override
@@ -45,6 +45,11 @@ public class AndroidFirebase implements FirebaseInterface{
         games.child(game_id).child("options").setValue(options.toString());
         games.child(game_id).child("lastmove").setValue("NONE");
         return game_id;
+    }
+    @Override
+    public void removeGame(String game_id) {
+        DatabaseReference games = db.getReference("active_games");
+        games.child(game_id).removeValue();
     }
 
     @Override
@@ -186,7 +191,7 @@ public class AndroidFirebase implements FirebaseInterface{
         turn.child("missile").setValue(String.valueOf(turn_info.get("missile")));
         turn.child("tile").removeValue();
         int i = 0;
-        for (Tile tile :  (ArrayList<Tile>) turn_info.get("tiles")) {
+        for (Tile tile : (ArrayList<Tile>) turn_info.get("tiles")) {
             turn.child("tile").child(String.valueOf(i)).child("X").setValue(String.valueOf(tile._index_x));
             turn.child("tile").child(String.valueOf(i)).child("Y").setValue(String.valueOf(tile._index_y));
             ++i;
@@ -209,7 +214,7 @@ public class AndroidFirebase implements FirebaseInterface{
         }
         DataSnapshot snapshot = read.getResult();
         for (DataSnapshot child : snapshot.getChildren()) {
-            if (child.getKey() != GameManager.getUserId()) {
+            if (!Objects.equals(child.getKey(), GameManager.getUserId())) {
                 grid_info[0] = child.getValue(String.class);
             }
         }
@@ -286,7 +291,5 @@ public class AndroidFirebase implements FirebaseInterface{
     public void addGame(String user_id, String game_id) {
         DatabaseReference user = db.getReference("users/" + user_id);
         DatabaseReference game = db.getReference("games/" + game_id);
-
-
     }
 }

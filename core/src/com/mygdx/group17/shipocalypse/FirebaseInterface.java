@@ -26,4 +26,6 @@ public interface FirebaseInterface {
     HashMap<String, Object> getTurnInfo(String game_id);
     String getOpponentInfo(String game_id);
 
+    void removeGame(String game_id);
+
     }
