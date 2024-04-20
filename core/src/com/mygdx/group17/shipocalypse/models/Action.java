@@ -8,5 +8,6 @@ public enum Action {
     createGame,
     readyGame,
     mainMenu,
-    test
+    test,
+    selectGame
 }

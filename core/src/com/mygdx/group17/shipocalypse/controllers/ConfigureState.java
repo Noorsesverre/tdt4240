@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class ConfigureState extends GameState {
-
+    private boolean ready = false;
     private final GameConfig gameconfig;
     // These properties are only needed for this game state
     private boolean ghost = false;
@@ -34,6 +34,8 @@ public class ConfigureState extends GameState {
 
     private final MenuButton ready_button;
 
+    private final MenuButton computer_button;
+
     public ConfigureState(GameConfig configuration) {
         gameconfig = configuration;
 
@@ -41,6 +43,7 @@ public class ConfigureState extends GameState {
         float buttonGameCenter = Options.GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
         SetBoatButtons();
         this.ready_button = new MenuButton(AssetManager.shape, (int)buttonGameCenter, 100, "ready", Action.readyGame);
+        this.computer_button = new MenuButton(AssetManager.shape, (int)buttonGameCenter, 100, "play\ncomputer", Action.readyGame);
     }
 
     private void SetBoatButtons() {
@@ -60,57 +63,65 @@ public class ConfigureState extends GameState {
 
     @Override
     public void render() {
-        for (Tile[] list : GameManager.getPlayer("1").get_grid().get_tiles()) {
-            for (Tile tile : list) {
-                if (hoverBoat != null && tile.getCenter().overlaps(hoverBoat.get_rectangle())) {
-                    AssetManager.shape.begin(ShapeRenderer.ShapeType.Filled);
-                    AssetManager.shape.setColor(Color.BLUE);
-                    for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
-                        if (boat.get_rectangle().overlaps(tile.get_rectangle())) {
+        if (!ready) {
+            for (Tile[] list : GameManager.getPlayer("1").get_grid().get_tiles()) {
+                for (Tile tile : list) {
+                    if (hoverBoat != null && tile.getCenter().overlaps(hoverBoat.get_rectangle())) {
+                        AssetManager.shape.begin(ShapeRenderer.ShapeType.Filled);
+                        AssetManager.shape.setColor(Color.BLUE);
+                        for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
+                            if (boat.get_rectangle().overlaps(tile.get_rectangle())) {
+                                AssetManager.shape.setColor(Color.RED);
+                            }
+                        }
+                    } else if (ghost && ghost_tiles.get(0).contains(tile) && Gdx.app.getType() == Application.ApplicationType.Desktop) {
+                        for (Tile ghost_tile : ghost_boat.getTiles()) {
+                            ghost_tile.unAssign();
+                        }
+                        AssetManager.shape.begin(ShapeRenderer.ShapeType.Filled);
+                        if (checkIfTilesAvailable(ghost_tiles) && ghost_tiles.get(0).size() == ghost_boat.getSize()) {
+                            AssetManager.shape.setColor(Color.BLUE);
+                        } else {
                             AssetManager.shape.setColor(Color.RED);
                         }
-                    }
-                } else if (ghost && ghost_tiles.get(0).contains(tile) && Gdx.app.getType() == Application.ApplicationType.Desktop) {
-                    for (Tile ghost_tile : ghost_boat.getTiles()) {
-                        ghost_tile.unAssign();
-                    }
-                    AssetManager.shape.begin(ShapeRenderer.ShapeType.Filled);
-                    if (checkIfTilesAvailable(ghost_tiles) && ghost_tiles.get(0).size() == ghost_boat.getSize()) {
-                        AssetManager.shape.setColor(Color.BLUE);
+                        for (Tile ghost_tile : ghost_boat.getTiles()) {
+                            ghost_tile.assign();
+                        }
                     } else {
-                        AssetManager.shape.setColor(Color.RED);
-                    }
-                    for (Tile ghost_tile : ghost_boat.getTiles()) {
-                        ghost_tile.assign();
-                    }
-                } else {
                         AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
                         AssetManager.shape.setColor(Color.NAVY);
+                    }
+
+                    AssetManager.shape.rect(tile._posx, tile._posy, Tile.TILE_SIZE, Tile.TILE_SIZE);
+                    AssetManager.shape.end();
                 }
-
-                AssetManager.shape.rect(tile._posx, tile._posy, Tile.TILE_SIZE, Tile.TILE_SIZE);
-                AssetManager.shape.end();
             }
-        }
 
-        ghost = false;
+            ghost = false;
 
-        for (BoatButton boatBtn : boatButtonList) {
-            boatBtn.render();
-        }
-
-
-        if (hoverBoat != null) {
-            hoverBoat.render(AssetManager.batch);
-        }
-
-        for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
-            boat.render(AssetManager.batch);
-        }
+            for (BoatButton boatBtn : boatButtonList) {
+                boatBtn.render();
+            }
 
 
-        if (gameconfig.allBoatsPlaced()) {
-            ready_button.render();
+            if (hoverBoat != null) {
+                hoverBoat.render(AssetManager.batch);
+            }
+
+            for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
+                boat.render(AssetManager.batch);
+            }
+
+            if (gameconfig.allBoatsPlaced()) {
+                ready_button.render();
+            }
+
+        } else {
+            String text = "WAITING FOR OPPONENT";
+
+            AssetManager.write(text, Options.GAME_WIDTH/2 - 100, Options.GAME_HEIGHT/2);
+            computer_button.render();
+
         }
 
     }
@@ -122,134 +133,151 @@ public class ConfigureState extends GameState {
 
     @Override
     public void handleInput() {
-        // Use viewport/AssetManager to unproject input coordinates to game world coordinates.
-        Vector3 input_vector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        Vector3 projected_vector = AssetManager.unprojectInput(input_vector);
-        Rectangle touch_rectangle = new Rectangle(projected_vector.x - 2, projected_vector.y - 2, 2, 2);
+        if (!ready) {
+            // Use viewport/AssetManager to unproject input coordinates to game world coordinates.
+            Vector3 input_vector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            Vector3 projected_vector = AssetManager.unprojectInput(input_vector);
+            Rectangle touch_rectangle = new Rectangle(projected_vector.x - 2, projected_vector.y - 2, 2, 2);
 
-        int android_correction = 0;
-        if (Gdx.app.getType() == Application.ApplicationType.Android) {
-            android_correction = android_correction + 100;
-        }
-        if (Gdx.input.isTouched() ) {
-
-            // Just update the hoverboat position
-            if (hoverBoat != null) {
-                int adjusted_x = (int)projected_vector.x - hoverBoat._texture.getWidth() / 2;
-                int adjusted_y = (int)projected_vector.y - hoverBoat._texture.getHeight() / 2;
-                hoverBoat._posx = adjusted_x;
-                hoverBoat._posy = adjusted_y + android_correction;
+            int android_correction = 0;
+            if (Gdx.app.getType() == Application.ApplicationType.Android) {
+                android_correction = android_correction + 100;
             }
-            // This creates a hoverboat
-            // for every button
-            //      if button is pressed
-            //          update the hoverboat
-            for (BoatButton boatBtn : boatButtonList) {
-                if (touch_rectangle.overlaps(boatBtn.get_rectangle()) && !touching && boatBtn.getAllowedBoats() > 0) {
-                    touching = true;
-                    int adjusted_x = (int)projected_vector.x - boatBtn.getTexture().getWidth() / 2;
-                    int adjusted_y = (int)projected_vector.y - boatBtn.getTexture().getHeight() / 2;
-                    hoverBoat = new Boat(adjusted_x, adjusted_y + android_correction, boatBtn.getSize());
+            if (Gdx.input.isTouched() ) {
+
+                // Just update the hoverboat position
+                if (hoverBoat != null) {
+                    int adjusted_x = (int)projected_vector.x - hoverBoat._texture.getWidth() / 2;
+                    int adjusted_y = (int)projected_vector.y - hoverBoat._texture.getHeight() / 2;
+                    hoverBoat._posx = adjusted_x;
+                    hoverBoat._posy = adjusted_y + android_correction;
                 }
-            }
-
-            // Double click deletes boat
-            if (System.currentTimeMillis() - timeOfLastTouch > 50 && System.currentTimeMillis() - timeOfLastTouch < 200) {
-                for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
-                    if (touch_rectangle.overlaps(boat.get_rectangle())) {
+                // This creates a hoverboat
+                // for every button
+                //      if button is pressed
+                //          update the hoverboat
+                for (BoatButton boatBtn : boatButtonList) {
+                    if (touch_rectangle.overlaps(boatBtn.get_rectangle()) && !touching && boatBtn.getAllowedBoats() > 0) {
                         touching = true;
-                        for (Boat opp_boat : GameManager.getPlayer("2").getBoatConfig().boats) {
-                            if (opp_boat.getSize() == boat.getSize()) {
-                                GameManager.getPlayer("2").getBoatConfig().RemoveBoat(opp_boat);
-                                break;
-                            }
-                        }
-                        GameManager.getPlayer("1").getBoatConfig().RemoveBoat(boat);
-                        gameconfig.increase_allowed_boat_type(boat._boatSize);
-                        SetBoatButtons();
-                        return;
+                        int adjusted_x = (int)projected_vector.x - boatBtn.getTexture().getWidth() / 2;
+                        int adjusted_y = (int)projected_vector.y - boatBtn.getTexture().getHeight() / 2;
+                        hoverBoat = new Boat(adjusted_x, adjusted_y + android_correction, boatBtn.getSize());
                     }
                 }
+
+                // Double click deletes boat
+                if (System.currentTimeMillis() - timeOfLastTouch > 50 && System.currentTimeMillis() - timeOfLastTouch < 200) {
+                    for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
+                        if (touch_rectangle.overlaps(boat.get_rectangle())) {
+                            touching = true;
+                            for (Boat opp_boat : GameManager.getPlayer("2").getBoatConfig().boats) {
+                                if (opp_boat.getSize() == boat.getSize()) {
+                                    GameManager.getPlayer("2").getBoatConfig().RemoveBoat(opp_boat);
+                                    break;
+                                }
+                            }
+                            GameManager.getPlayer("1").getBoatConfig().RemoveBoat(boat);
+                            gameconfig.increase_allowed_boat_type(boat._boatSize);
+                            SetBoatButtons();
+                            return;
+                        }
+                    }
+                } else {
+                    // One touch means rotating the boat
+                    for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
+                        if (touch_rectangle.overlaps(boat.get_rectangle()) && !touching && hoverBoat == null) {
+                            Tile selected_tile = new Tile(0,0,0,0);
+                            for (Tile[] list : GameManager.getPlayer("1").get_grid().get_tiles()) {
+                                for (Tile tile : list) {
+                                    if (touch_rectangle.overlaps(tile.get_rectangle())) {
+                                        selected_tile = tile;
+                                        break;
+                                    }
+                                }
+                            }
+                            touching = true;
+                            int origin = 0;
+                            for (Tile tile : boat.getTiles()) {
+                                if (tile == selected_tile) {
+                                    origin = boat.getTiles().indexOf(tile);
+                                }
+                                tile.unAssign();
+                            }
+                            ArrayList<ArrayList<Tile>> placement_tiles = getPlacementTiles(boat.get_rectangle(selected_tile._posx, selected_tile._posy, true, origin), GameManager.getPlayer("1"));
+                            if (checkIfTilesAvailable(placement_tiles) && placement_tiles.size() == boat.getSize()) {
+                                GameManager.getPlayer("1").getBoatConfig().RemoveBoat(boat);
+                                placeBoat(boat, placement_tiles.get(0), true, GameManager.getPlayer("1"));
+                                boat.addTiles(placement_tiles.get(0));
+                            } else {
+                                for (Tile tile: boat.getTiles()) {
+                                    tile.assign();
+                                }
+                            }
+                            return;
+                        }
+                    }
+                }
+
+                timeOfLastTouch = System.currentTimeMillis();
             } else {
-                // One touch means rotating the boat
+                touching = false;
+
                 for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
-                    if (touch_rectangle.overlaps(boat.get_rectangle()) && !touching && hoverBoat == null) {
-                        Tile selected_tile = new Tile(0,0,0,0);
+                    if (touch_rectangle.overlaps(boat.get_rectangle())) {
+                        ghost = true;
+                        Tile possibly_selected_tile = new Tile(0,0,0,0);
                         for (Tile[] list : GameManager.getPlayer("1").get_grid().get_tiles()) {
                             for (Tile tile : list) {
                                 if (touch_rectangle.overlaps(tile.get_rectangle())) {
-                                    selected_tile = tile;
+                                    possibly_selected_tile = tile;
                                     break;
                                 }
                             }
                         }
-                        touching = true;
                         int origin = 0;
                         for (Tile tile : boat.getTiles()) {
-                            if (tile == selected_tile) {
+                            if (tile == possibly_selected_tile) {
                                 origin = boat.getTiles().indexOf(tile);
                             }
-                            tile.unAssign();
                         }
-                        ArrayList<ArrayList<Tile>> placement_tiles = getPlacementTiles(boat.get_rectangle(selected_tile._posx, selected_tile._posy, true, origin), GameManager.getPlayer("1"));
-                        if (checkIfTilesAvailable(placement_tiles) && placement_tiles.size() == boat.getSize()) {
-                            GameManager.getPlayer("1").getBoatConfig().RemoveBoat(boat);
-                            placeBoat(boat, placement_tiles.get(0), true, GameManager.getPlayer("1"));
-                            boat.addTiles(placement_tiles.get(0));
-                        } else {
-                            for (Tile tile: boat.getTiles()) {
-                                tile.assign();
-                            }
-                        }
-                        return;
+                        ghost_tiles = getPlacementTiles(boat.get_rectangle(possibly_selected_tile._posx, possibly_selected_tile._posy, true, origin), GameManager.getPlayer("1"));
+                        ghost_boat = boat;
+                        break;
                     }
+                    ghost = false;
+                }
+
+                // If there is a hoverboat when touch is released, then place the boat on the last matching tile
+                if (hoverBoat != null) {
+                    ArrayList<ArrayList<Tile>> placement_tiles = getPlacementTiles(hoverBoat.get_rectangle(), GameManager.getPlayer("1"));
+                    if (checkIfPlacementIsValid(hoverBoat, placement_tiles) && gameconfig.subtract_allowed_boat_type(hoverBoat.getSize())) {
+                        placeBoat(hoverBoat, placement_tiles.get(0), false, GameManager.getPlayer("1"));
+                        SetBoatButtons();
+                        if (GameManager.getSetupMode() == 1) {
+                            placeRandomOpponent(new Boat(hoverBoat._posx, hoverBoat._posy, hoverBoat._boatSize));
+                        }
+                    }
+                    hoverBoat = null;
+                }
+            }
+            if (gameconfig.allBoatsPlaced()) {
+                if (ready_button.handleInput()) {
+                    GameManager.playerReady();
+                    ready = true;
                 }
             }
 
-            timeOfLastTouch = System.currentTimeMillis();
         } else {
-            touching = false;
-
-            for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
-                if (touch_rectangle.overlaps(boat.get_rectangle())) {
-                    ghost = true;
-                    Tile possibly_selected_tile = new Tile(0,0,0,0);
-                    for (Tile[] list : GameManager.getPlayer("1").get_grid().get_tiles()) {
-                        for (Tile tile : list) {
-                            if (touch_rectangle.overlaps(tile.get_rectangle())) {
-                                possibly_selected_tile = tile;
-                                break;
-                            }
-                        }
-                    }
-                    int origin = 0;
-                    for (Tile tile : boat.getTiles()) {
-                        if (tile == possibly_selected_tile) {
-                            origin = boat.getTiles().indexOf(tile);
-                        }
-                    }
-                    ghost_tiles = getPlacementTiles(boat.get_rectangle(possibly_selected_tile._posx, possibly_selected_tile._posy, true, origin), GameManager.getPlayer("1"));
-                    ghost_boat = boat;
-                    break;
-                }
-                ghost = false;
-            }
-
-            // If there is a hoverboat when touch is released, then place the boat on the last matching tile
-            if (hoverBoat != null) {
-                ArrayList<ArrayList<Tile>> placement_tiles = getPlacementTiles(hoverBoat.get_rectangle(), GameManager.getPlayer("1"));
-                if (checkIfPlacementIsValid(hoverBoat, placement_tiles) && gameconfig.subtract_allowed_boat_type(hoverBoat.getSize())) {
-                    placeBoat(hoverBoat, placement_tiles.get(0), false, GameManager.getPlayer("1"));
-                    SetBoatButtons();
-                    placeRandomOpponent(new Boat(hoverBoat._posx, hoverBoat._posy, hoverBoat._boatSize));
-                }
-                hoverBoat = null;
-            }
-        }
-        if (gameconfig.allBoatsPlaced()) {
-            if (ready_button.handleInput()) {
+            if (GameManager.bothPlayersReady()) {
+                GameManager.single_player = false;
                 GameManager.setConfig(gameconfig);
                 GameManager.setState(State.play);
+            } else {
+                if (computer_button.handleInput()) {
+                    GameManager.single_player = true;
+                    GameManager.setConfig(gameconfig);
+                    GameManager.setState(State.play);
+                }
             }
         }
     }

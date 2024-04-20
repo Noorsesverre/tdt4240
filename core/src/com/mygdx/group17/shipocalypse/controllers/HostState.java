@@ -11,21 +11,22 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.group17.shipocalypse.models.Action;
 import com.mygdx.group17.shipocalypse.models.BoatConfiguration;
 import com.mygdx.group17.shipocalypse.models.Player;
+import com.mygdx.group17.shipocalypse.models.State;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 import com.mygdx.group17.shipocalypse.ui.MenuButton;
 import com.mygdx.group17.shipocalypse.models.Options;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
 
 public class HostState extends GameState {
-    private LinkedHashMap<String, LinkedHashMap> default_options = Options.defaults;
     private HashMap<String, Object> selected_options = new HashMap<String, Object>();
     private MenuButton start_button;
-    private ShapeRenderer shapeRenderer;
+
+    private MenuButton menu_button;
 
     private static HashMap<String, List<MenuButton>> options = new HashMap<String, List<MenuButton>>();
 
     public HostState() {
-        this.shapeRenderer = AssetManager.getInstance().shape;
+        ShapeRenderer shapeRenderer = AssetManager.getInstance().shape;
         float buttonGameCenter = Options.GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
         int y = 550;
 
@@ -47,12 +48,14 @@ public class HostState extends GameState {
         // Select defaults
         for (String s : options.keySet()) {
             for (MenuButton b : options.get(s)) {
+                LinkedHashMap<String, LinkedHashMap> default_options = Options.defaults;
                 if (default_options.get(s).keySet().contains(b.get_text())) {
                     select(s, b);
                 }
             }
         }
-        this.start_button = new MenuButton(shapeRenderer, (int)buttonGameCenter, y, "create game", Action.createGame);
+        this.start_button = new MenuButton(shapeRenderer, (int)buttonGameCenter + MenuButton.BUTTON_WIDTH/2, y, "create game >", Action.createGame);
+        this.menu_button = new MenuButton(shapeRenderer, (int)buttonGameCenter - MenuButton.BUTTON_WIDTH/2 - 10, y, "< main menu", Action.mainMenu);
     }
 
     public void select(String s, MenuButton b) {
@@ -70,7 +73,8 @@ public class HostState extends GameState {
                 b.render(b.getColor());
             }
         }
-       start_button.render();
+        start_button.render();
+        menu_button.render();
     }
 
     @Override
@@ -97,7 +101,10 @@ public class HostState extends GameState {
         }
         if (start_button.handleInput()) {
             System.out.println(selected_options);
-            GameManager.createGame((int)selected_options.get("grids"), (int)selected_options.get("grids"), (Map<Integer,Integer>)selected_options.get("boats"));
+            GameManager.createGame(selected_options);
+        }
+        if (menu_button.handleInput()) {
+            GameManager.setState(State.menu);
         }
     }
 }

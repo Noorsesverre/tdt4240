@@ -38,7 +38,7 @@ public class MenuButton extends Button {
     @Override
     public boolean handleInput() {
 
-        if (Gdx.input.isTouched() && !GameManager.isTouching()) {
+        if (Gdx.input.isTouched()) {
 
             // Use viewport/AssetManager to unproject input coordinates to game world coordinates.
             Vector3 input_vector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "384230678164",
+    "firebase_url": "https://shipocalypse-tdt4240-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "shipocalypse-tdt4240",
+    "storage_bucket": "shipocalypse-tdt4240.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384230678164:android:31642f3444830a07b75e81",
+        "android_client_info": {
+          "package_name": "com.mygdx.group17.shipocalypse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "384230678164-7v2qf525iq1v7a1r6707neaukuleaoha.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpxq-IpCOyXS8FtUshrez7mj5iHUY79aE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384230678164-7v2qf525iq1v7a1r6707neaukuleaoha.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

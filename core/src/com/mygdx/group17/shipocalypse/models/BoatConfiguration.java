@@ -2,11 +2,10 @@ package com.mygdx.group17.shipocalypse.models;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class BoatConfiguration {
 
-    public List<Boat> boats;
+    public ArrayList<Boat> boats;
 
     public BoatConfiguration() {
         this.boats = new ArrayList<>();
@@ -16,6 +15,16 @@ public class BoatConfiguration {
         boats.add(boat);
         boat.addTiles(tiles);
     }
+
+    public String debug() {
+        String debug_string = "";
+        for (Boat boat : boats) {
+            debug_string = debug_string + "BOAT: \n";
+            debug_string = debug_string + "- size : " + boat.getSize() + "\n";
+            debug_string = debug_string + "- position : " + boat._posx + " - " + boat._posy + "\n";
+        }
+        return debug_string;
+    }
     public void RemoveBoat(Boat boat) {
         for (Tile tile : boat.getTiles()) {
             tile.unAssign();
@@ -23,14 +32,10 @@ public class BoatConfiguration {
         this.boats.remove(boat);
     }
 
-    public void RotateBoat(Boat _boat) {
-        _boat.turn_boat();
-    }
+    // FOLLOWING IS REQUIRED FOR FIREBASE SERIALIZATION
+    // These methods are not used directly by our app, but must exist.
+    public ArrayList<Boat> getBoats() { return boats; }
+    public void setBoats(ArrayList<Boat> _boats) { boats = _boats; }
 
-    public void debug() {
-        for (Boat boat : boats) {
-            System.out.println("X: " + String.valueOf(boat._posx) + ", Y: " + String.valueOf(boat._posy) + ", S: " + String.valueOf(boat._boatSize));
-        }
-    }
 
 }
