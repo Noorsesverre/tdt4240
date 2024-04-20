@@ -21,6 +21,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class GameManager {
 
+    public static boolean single_player = false;
+
     private static String current_game_id;
     private static Preferences saved; // used for storing an ID on the device
     private static String user_id; // fetched from firebase
@@ -55,10 +57,13 @@ public class GameManager {
     }
     public static void playerReady() {
         firebase.playerReady(user_id, current_game_id);
+        System.out.println(getPlayer("1").getBoatConfig().debug());
+        firebase.postGridInfo(current_game_id, user_id, encodeInfo(getPlayer("1").getBoatConfig()));
     }
 
     public static boolean bothPlayersReady() {
         return firebase.bothPlayersReady(current_game_id);
+
     }
 
     public static void setState(State state) {
@@ -97,7 +102,7 @@ public class GameManager {
 
         // TODO: Implement opponent logic instead of skipable character
         Player opponent = new Player(config.getGrid_x(), config.getGrid_y(), new BoatConfiguration(), "2", true);
-        GameManager.addPlayer(opponent);
+        addPlayer(opponent);
 
         active_player = getPlayer("1");
         playState = new ConfigureState(config);
@@ -108,6 +113,8 @@ public class GameManager {
         int grids = (int)options.get("grids");
         Map<Integer, Integer> boats = (Map)options.get("boats");
 
+        firebase.joinGame(game_id, user_id);
+
         setupMode = 2; // 2 is joining
 
         GameConfig config = new GameConfig(grids, grids, boats);
@@ -117,12 +124,17 @@ public class GameManager {
 
         // TODO: Implement opponent logic instead of skipable character
         Player opponent = new Player(config.getGrid_x(), config.getGrid_y(), new BoatConfiguration(), "2", true);
-        GameManager.addPlayer(opponent);
+        addPlayer(opponent);
 
         active_player = getPlayer("1");
         playState = new ConfigureState(config);
 
     }
+
+    public static boolean checkTurn() {
+        return firebase.checkTurn(current_game_id, user_id);
+    }
+
 
     public static void handleInput() { playState.handleInput(); }
 
@@ -164,6 +176,8 @@ public class GameManager {
     }
 
     public static void setConfig(GameConfig config) {
+        Player opponent = opponentFromEncodedInfo(firebase.getOpponentInfo(current_game_id), config.getGrid_x());
+        addPlayer(opponent);
         configuration = config;
     }
 
@@ -177,7 +191,8 @@ public class GameManager {
     }
     public static GameConfig getConfig() { return configuration; }
 
-    public static void endTurn() {
+    public static void endTurn(HashMap<Object, Object> turn_info) {
+        firebase.postTurnInfo(current_game_id, user_id, turn_info);
         // Find the non-playing player
         Player non_playing_player = null;
         for (Player player : players) {
@@ -187,6 +202,10 @@ public class GameManager {
         }
 
         active_player = non_playing_player;
+    }
+
+    public static HashMap<String, Object> getLastTurn() {
+        return firebase.getTurnInfo(current_game_id);
     }
 
     public static void setFirebase(FirebaseInterface _firebase) {
@@ -256,6 +275,7 @@ public class GameManager {
             new_boatconfig.AddBoat(new_boat, new_tiles);
         }
         new_player.setBoatConfig(new_boatconfig);
+        new_player.setId("0");
         return new_player;
     }
 

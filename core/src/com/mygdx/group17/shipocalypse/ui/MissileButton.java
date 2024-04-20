@@ -6,6 +6,7 @@ import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 public class MissileButton extends Button {
 
     private MissileType MissileType;
+    public int id;
 
     private int ammunition;
 
@@ -16,23 +17,28 @@ public class MissileButton extends Button {
         switch (MissileType) {
             case Normal:
                 ammunition = 99999; // Just a really big number
+                id = 1;
                 set_text("Regular\nShot");
                 break;
             case Healing:
                 ammunition = 2;
+                id = 2;
                 set_text("Healing\nShot (" + ammunition + ")");
                 break;
             case Vision:
                 ammunition = 2;
+                id = 3;
                 set_text("Vision\nShot (" + ammunition + ")");
                 break;
             case TripleRandom:
                 ammunition = 3;
+                id = 4;
                 set_manual_text_offset(60, 15);
                 set_text("Triple\nRandom\nShot (" + ammunition + ")");
                 break;
             default:
                 ammunition = 1;
+                id = 5;
                 set_text(MissileType.name() + "\nShot (" + ammunition + ")");
                 break;
         }

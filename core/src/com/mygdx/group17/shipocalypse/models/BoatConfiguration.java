@@ -15,6 +15,16 @@ public class BoatConfiguration {
         boats.add(boat);
         boat.addTiles(tiles);
     }
+
+    public String debug() {
+        String debug_string = "";
+        for (Boat boat : boats) {
+            debug_string = debug_string + "BOAT: \n";
+            debug_string = debug_string + "- size : " + boat.getSize() + "\n";
+            debug_string = debug_string + "- position : " + boat._posx + " - " + boat._posy + "\n";
+        }
+        return debug_string;
+    }
     public void RemoveBoat(Boat boat) {
         for (Tile tile : boat.getTiles()) {
             tile.unAssign();

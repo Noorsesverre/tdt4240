@@ -36,6 +36,7 @@ public class JoinState extends GameState {
             menu_buttons.add(new MenuButton(shapeRenderer, (int)buttonGameCenter, y, game_id, Action.selectGame));
             y = y - 100;
         }
+
     }
 
     @Override

@@ -116,7 +116,7 @@ public class ConfigureState extends GameState {
         } else {
             String text = "WAITING FOR OPPONENT";
 
-            AssetManager.write(text, Options.GAME_WIDTH/2 - 20, Options.GAME_HEIGHT/2);
+            AssetManager.write(text, Options.GAME_WIDTH/2 - 50, Options.GAME_HEIGHT/2);
 
         }
 

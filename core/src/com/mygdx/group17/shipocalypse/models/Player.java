@@ -27,6 +27,9 @@ public class Player {
         this.player_id = player_id;
         this.skipable_player = is_skipable;
     }
+    public void setId(String id) {
+        player_id = id;
+    }
     public Player(int gridSizeX, int gridSizeY) {
         grid = new Grid(gridSizeX, gridSizeY);
     }
