@@ -11,9 +11,8 @@ For compiling and running the game, we recommend using Android Studio.
 
 1. Download and install both git and Android Studio if you have not done so already.
 
-2.Clone the repository into a location of your choice on your PC using git.
-
-`~$ git clone https://github.com/Noorsesverre/tdt4240`
+2. Clone the repository into a location of your choice on your PC using git.<br/>
+  `~$ git clone https://github.com/Noorsesverre/tdt4240`
 
 3. Open the folder (tdt4240) with Android Studio. All the necessary packages to compile the program will automatically start downloading.
 
