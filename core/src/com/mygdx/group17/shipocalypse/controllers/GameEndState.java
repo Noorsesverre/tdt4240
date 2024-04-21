@@ -11,7 +11,6 @@ import com.mygdx.group17.shipocalypse.ui.MenuButton;
 public class GameEndState extends GameState {
     Texture result;
     private final MenuButton main_menu_button;
-
     public GameEndState(Texture _result) {
         float buttonGameCenter = Options.GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
         result = _result;

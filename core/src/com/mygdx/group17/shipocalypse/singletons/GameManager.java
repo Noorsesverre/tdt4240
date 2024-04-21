@@ -3,6 +3,7 @@ package com.mygdx.group17.shipocalypse.singletons;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
@@ -16,8 +17,6 @@ import com.mygdx.group17.shipocalypse.FirebaseInterface;
 import com.mygdx.group17.shipocalypse.models.*;
 import com.mygdx.group17.shipocalypse.controllers.*;
 import com.mygdx.group17.shipocalypse.Shipocalypse;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class GameManager {
 
@@ -39,12 +38,13 @@ public class GameManager {
     private GameManager(Shipocalypse _shipocalypse) {
         result = 0;
         AssetManager.getInstance();
-        this.players = new ArrayList<Player>() {};
+        players = new ArrayList<Player>() {};
         saved = Gdx.app.getPreferences("saved");
         setupMode = 1; // 1 is hosting
     }
     public static void addPlayer(Player new_player) { players.add(new_player); }
-    public static Player getActive_player() { return active_player; };
+    public static Player getActive_player() { return active_player; }
+
     public static void init(Shipocalypse _shipocalypse) {
         if (single_instance != null) {
             throw new RuntimeException("GameManager already initialized");
@@ -155,12 +155,7 @@ public class GameManager {
         AssetManager.write("GAME ID: " + current_game_id, 15,40);
 
         // Ensures that a continuous touch will not be registered multiple times.
-        if (Gdx.input.isTouched()) {
-            touching = true;
-        }
-        else {
-            touching = false;
-        }
+        touching = Gdx.input.isTouched();
 
         if (Gdx.input.isTouched()) {
             Vector3 input_vector = AssetManager.unprojectInput(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -217,7 +212,7 @@ public class GameManager {
         // Find the non-playing player
         Player non_playing_player = null;
         for (Player player : players) {
-            if (active_player.getPlayer_id() != player.getPlayer_id()) {
+            if (!Objects.equals(active_player.getPlayer_id(), player.getPlayer_id())) {
                 non_playing_player = player;
             }
         }
@@ -229,7 +224,7 @@ public class GameManager {
         // Find the non-playing player
         Player non_playing_player = null;
         for (Player player : players) {
-            if (active_player.getPlayer_id() != player.getPlayer_id()) {
+            if (!Objects.equals(active_player.getPlayer_id(), player.getPlayer_id())) {
                 non_playing_player = player;
             }
         }
@@ -259,16 +254,16 @@ public class GameManager {
     public static String getCurrentGame() { return current_game_id; }
 
     public static String encodeInfo(BoatConfiguration boat_config) {
-        String info = "";
+        StringBuilder info = new StringBuilder();
         for (Boat boat : boat_config.boats) {
-            info = info + String.valueOf(boat.getSize()) + ":";
+            info.append(boat.getSize()).append(":");
             for (Tile tile : boat.getTiles()) {
-                info = info + String.valueOf(tile._index_x) + "@" + String.valueOf(tile._index_y) + ",";
+                info.append(tile._index_x).append("@").append(tile._index_y).append(",");
             }
-            info = info + "&";
+            info.append("&");
         }
-        info = info.substring(0, info.length() - 1);
-        return info;
+        info = new StringBuilder(info.substring(0, info.length() - 1));
+        return info.toString();
     }
 
     public static HashMap<String, HashMap<String, Object>> getOpenGames() {

@@ -4,13 +4,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import com.mygdx.group17.shipocalypse.models.Action;
-import com.mygdx.group17.shipocalypse.models.BoatConfiguration;
-import com.mygdx.group17.shipocalypse.models.Player;
 import com.mygdx.group17.shipocalypse.models.State;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 import com.mygdx.group17.shipocalypse.ui.MenuButton;
@@ -18,12 +15,12 @@ import com.mygdx.group17.shipocalypse.models.Options;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
 
 public class HostState extends GameState {
-    private HashMap<String, Object> selected_options = new HashMap<String, Object>();
-    private MenuButton start_button;
+    private final HashMap<String, Object> selected_options = new HashMap<String, Object>();
+    private final MenuButton start_button;
 
-    private MenuButton menu_button;
+    private final MenuButton menu_button;
 
-    private static HashMap<String, List<MenuButton>> options = new HashMap<String, List<MenuButton>>();
+    private static final HashMap<String, List<MenuButton>> options = new HashMap<String, List<MenuButton>>();
 
     public HostState() {
         ShapeRenderer shapeRenderer = AssetManager.getInstance().shape;

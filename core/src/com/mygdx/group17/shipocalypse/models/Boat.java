@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Boat {
 
@@ -18,7 +17,7 @@ public class Boat {
     public int _boatSize;
     public boolean _isVertical = false;
     public Texture _texture;
-    private boolean[] hits;
+    private final boolean[] hits;
     private boolean sunk;
     private ArrayList<Tile> tiles;
 

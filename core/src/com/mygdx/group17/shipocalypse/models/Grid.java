@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Grid {
 
-    private Tile[][] _tiles;
+    private final Tile[][] _tiles;
     public int GRID_POS_X;
     public int GRID_POS_Y;
     public static final int GRID_GAP = 2;
@@ -20,11 +20,10 @@ public class Grid {
 
         for (int x = 0; x < sizeX; x++ )  {
             for (int y = 0; y < sizeY; y++) {
-                int x_gap = GRID_GAP, y_gap = GRID_GAP;
 
                 _tiles[x][y] = new Tile(
-                        GRID_POS_X + x * x_gap + x * Tile.TILE_SIZE,
-                        GRID_POS_Y + y * y_gap + y * Tile.TILE_SIZE,
+                        GRID_POS_X + x * GRID_GAP + x * Tile.TILE_SIZE,
+                        GRID_POS_Y + y * GRID_GAP + y * Tile.TILE_SIZE,
                         x,
                         y
                 );
@@ -62,9 +61,7 @@ public class Grid {
 
         tiles.add(center_tile);
 
-        for (Tile tile : center_tile.getAdjacentTiles()) {
-            tiles.add(tile);
-        }
+        tiles.addAll(center_tile.getAdjacentTiles());
 
         // NOTE: Lazy mans way of avoiding out of range index errors
         try {

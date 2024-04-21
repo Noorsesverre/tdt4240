@@ -1,9 +1,7 @@
 package com.mygdx.group17.shipocalypse.controllers;
 
 import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.group17.shipocalypse.models.State;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -11,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.group17.shipocalypse.models.*;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
+import com.mygdx.group17.shipocalypse.ui.Board;
 import com.mygdx.group17.shipocalypse.ui.BoatButton;
 import com.mygdx.group17.shipocalypse.ui.MenuButton;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
@@ -24,21 +23,26 @@ public class ConfigureState extends GameState {
     private boolean ready = false;
     private final GameConfig gameconfig;
     // These properties are only needed for this game state
-    private boolean ghost = false;
-    private ArrayList<ArrayList<Tile>> ghost_tiles; // Used to see how boats may be rotated
-    private Boat ghost_boat;
+    public boolean ghost = false;
+    public ArrayList<ArrayList<Tile>> ghost_tiles; // Used to see how boats may be rotated
+    public Boat ghost_boat;
     private List<BoatButton> boatButtonList;
-    private Boat hoverBoat;
+    public Boat hoverBoat;
     private long timeOfLastTouch; // Used to figure out if a user is dobble tapping the screen
     private boolean touching; // Used to avoid triggering a clause too often.
+
+    private Board player_board;
 
     private final MenuButton ready_button;
 
     private final MenuButton computer_button;
 
-    public ConfigureState(GameConfig configuration) {
-        gameconfig = configuration;
+    public final State state;
 
+    public ConfigureState(GameConfig configuration) {
+        state = State.configure;
+        gameconfig = configuration;
+        player_board = new Board(GameManager.getPlayer("1"));
 
         float buttonGameCenter = Options.GAME_WIDTH / 2 - MenuButton.BUTTON_WIDTH / 2;
         SetBoatButtons();
@@ -60,68 +64,30 @@ public class ConfigureState extends GameState {
             );
         }
     }
-
     @Override
     public void render() {
         if (!ready) {
-            for (Tile[] list : GameManager.getPlayer("1").get_grid().get_tiles()) {
-                for (Tile tile : list) {
-                    if (hoverBoat != null && tile.getCenter().overlaps(hoverBoat.get_rectangle())) {
-                        AssetManager.shape.begin(ShapeRenderer.ShapeType.Filled);
-                        AssetManager.shape.setColor(Color.BLUE);
-                        for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
-                            if (boat.get_rectangle().overlaps(tile.get_rectangle())) {
-                                AssetManager.shape.setColor(Color.RED);
-                            }
-                        }
-                    } else if (ghost && ghost_tiles.get(0).contains(tile) && Gdx.app.getType() == Application.ApplicationType.Desktop) {
-                        for (Tile ghost_tile : ghost_boat.getTiles()) {
-                            ghost_tile.unAssign();
-                        }
-                        AssetManager.shape.begin(ShapeRenderer.ShapeType.Filled);
-                        if (checkIfTilesAvailable(ghost_tiles) && ghost_tiles.get(0).size() == ghost_boat.getSize()) {
-                            AssetManager.shape.setColor(Color.BLUE);
-                        } else {
-                            AssetManager.shape.setColor(Color.RED);
-                        }
-                        for (Tile ghost_tile : ghost_boat.getTiles()) {
-                            ghost_tile.assign();
-                        }
-                    } else {
-                        AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
-                        AssetManager.shape.setColor(Color.NAVY);
-                    }
-
-                    AssetManager.shape.rect(tile._posx, tile._posy, Tile.TILE_SIZE, Tile.TILE_SIZE);
-                    AssetManager.shape.end();
-                }
-            }
-
-            ghost = false;
+            player_board.render(this);
 
             for (BoatButton boatBtn : boatButtonList) {
                 boatBtn.render();
             }
-
-
             if (hoverBoat != null) {
                 hoverBoat.render(AssetManager.batch);
             }
-
             for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
                 boat.render(AssetManager.batch);
             }
+            ghost = false;
 
             if (gameconfig.allBoatsPlaced()) {
                 ready_button.render();
             }
-
         } else {
             String text = "WAITING FOR OPPONENT";
 
             AssetManager.write(text, Options.GAME_WIDTH/2 - 100, Options.GAME_HEIGHT/2);
             computer_button.render();
-
         }
 
     }
@@ -333,10 +299,7 @@ public class ConfigureState extends GameState {
     }
 
     private boolean checkIfPlacementIsValid(Boat hoverBoat, ArrayList<ArrayList<Tile>> placement_tiles) {
-        boolean placement_valid = true;
-        if (placement_tiles.get(0).size() != hoverBoat.getSize()) {
-            placement_valid = false;
-        }
+        boolean placement_valid = placement_tiles.get(0).size() == hoverBoat.getSize();
         for (ArrayList<Tile> list : placement_tiles) {
             for (Tile tile : list) {
                 if (tile.isOccupied()) {
@@ -348,7 +311,7 @@ public class ConfigureState extends GameState {
         return  placement_valid;
     }
 
-    private boolean checkIfTilesAvailable(ArrayList<ArrayList<Tile>> placement_tiles) {
+    public boolean checkIfTilesAvailable(ArrayList<ArrayList<Tile>> placement_tiles) {
         boolean tiles_available = true;
         for (ArrayList<Tile> list : placement_tiles) {
             for (Tile tile : list) {

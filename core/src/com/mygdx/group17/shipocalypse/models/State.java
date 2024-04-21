@@ -6,5 +6,6 @@ public enum State {
     join,
     configure,
     play,
-    gameEnd
+    gameEnd,
+    undefined
 }

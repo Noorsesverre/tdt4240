@@ -12,6 +12,7 @@ import com.mygdx.group17.shipocalypse.models.State;
 import com.mygdx.group17.shipocalypse.models.Tile;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
+import com.mygdx.group17.shipocalypse.ui.Board;
 import com.mygdx.group17.shipocalypse.ui.MenuButton;
 import com.mygdx.group17.shipocalypse.ui.MissileButton;
 import com.mygdx.group17.shipocalypse.ui.MissileType;
@@ -24,17 +25,23 @@ public class PlayState extends GameState {
     public static boolean selection = false;
     Tile selected_tile;
     public MenuButton fire_button;
-    private String opponent_id;
+    private final String opponent_id;
     public ArrayList<MissileButton> missile_buttons;
     public MissileButton selected_missile_button;
     public boolean waiting;
     private long turn_time;
     private long frame_time;
     private long frame_time_last;
+
+    private Board player_board;
+    private Board opponent_board;
     private String selected_player_id;
+
+    public final State state;
+
     private long db_update; // used to not read from db too often
     public PlayState() {
-
+        state = State.play;
         frame_time = System.currentTimeMillis();
         frame_time_last = System.currentTimeMillis();
 
@@ -73,6 +80,8 @@ public class PlayState extends GameState {
                 tile.shiftUp();
             }
         }
+        player_board = new Board(GameManager.getPlayer("1"));
+        opponent_board = new Board(GameManager.getPlayer(opponent_id));
         db_update = System.currentTimeMillis();
     }
 
@@ -89,67 +98,13 @@ public class PlayState extends GameState {
                 System.out.println("  - " + hit);
             }
         }
-
     }
 
     @Override
     public void render() {
-        for (Tile[] list : GameManager.getPlayer(opponent_id).get_grid().get_tiles()) {
-            for (Tile tile : list) {
-                AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
-                AssetManager.shape.setColor(Color.NAVY);
-                AssetManager.shape.rect(tile._posx, tile._posy , Tile.TILE_SIZE, Tile.TILE_SIZE);
-                AssetManager.shape.end();
-            }
-        }
+        opponent_board.render();
+        player_board.render();
 
-        for (Tile[] list : GameManager.getPlayer("1").get_grid().get_tiles()) {
-            for (Tile tile : list) {
-                AssetManager.shape.begin(ShapeRenderer.ShapeType.Line);
-                AssetManager.shape.setColor(Color.NAVY);
-                AssetManager.shape.rect(tile._posx, tile._posy , Tile.TILE_SIZE, Tile.TILE_SIZE);
-                AssetManager.shape.end();
-            }
-        }
-
-        for (Boat boat : GameManager.getPlayer(opponent_id).getBoatConfig().boats) {
-            if (boat.isSunk()) {
-                boat.render(AssetManager.batch);
-            }
-        }
-
-        for (Boat boat : GameManager.getPlayer("1").getBoatConfig().boats) {
-            boat.render(AssetManager.batch);
-        }
-
-        for (Tile[] list : GameManager.getPlayer(opponent_id).get_grid().get_tiles()) {
-            for (Tile tile : list) {
-                if (tile.burning) {
-                    AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy + 7);
-                }
-                else if (tile.isHit()) {
-                    AssetManager.draw(AssetManager.cross_sprite, tile._posx, tile._posy);
-                }
-                else if (tile.isSelected()) {
-                    AssetManager.draw(AssetManager.crosshair_sprite, tile._posx, tile._posy);
-                } else if (tile.isHit()) {
-                    AssetManager.draw(AssetManager.cross_sprite, tile._posx, tile._posy);
-                } else if (tile.isExposed()) {
-                    AssetManager.draw(AssetManager.exclamation_point_sprite, tile._posx, tile._posy);
-                }
-            }
-        }
-
-        for (Tile[] list : GameManager.getPlayer("1").get_grid().get_tiles()) {
-            for (Tile tile : list) {
-                if (tile.burning) {
-                    AssetManager.draw(AssetManager.fire_sprite, tile._posx, tile._posy + 7);
-                }
-                else if (tile.isHit()) {
-                    AssetManager.draw(AssetManager.cross_sprite, tile._posx, tile._posy);
-                }
-            }
-        }
 
         if (selected_missile_button != null) {
             if (selection || selected_missile_button.getMissileType() == MissileType.TripleRandom) {
@@ -166,6 +121,7 @@ public class PlayState extends GameState {
                 missileButton.render(Color.RED);
             }
         }
+
         if (waiting) {
             AssetManager.write("WAITING FOR OPPONENT", Options.GAME_WIDTH/2 - 100, Options.GAME_HEIGHT/2);
         } else {
@@ -176,7 +132,7 @@ public class PlayState extends GameState {
             } else if (seconds.length() < 2) {
                 seconds = "0" + seconds;
             }
-            AssetManager.write("TURN TIME:\n" + String.valueOf(minutes) + ":" + String.valueOf(seconds), 20, Options.GAME_HEIGHT/2);
+            AssetManager.write("TURN TIME:\n" + minutes + ":" + seconds, 20, Options.GAME_HEIGHT/2);
         }
 
     }
@@ -295,7 +251,7 @@ public class PlayState extends GameState {
                 random_tiles.add(GameManager.getPlayer(opponent_id).hit_random_tile());
                 turn_info.put("missile",1);
                 turn_info.put("tiles",random_tiles);
-                System.out.println(random_tiles.toString());
+                System.out.println(random_tiles);
                 GameManager.endTurn(turn_info);
                 if (!GameManager.single_player) {
                     waiting = true;
@@ -388,7 +344,7 @@ public class PlayState extends GameState {
                     boolean end_turn = false;
 
                     if (selection) {
-                        System.out.println("Fired " + selected_missile_button.getMissileType().name() + " at tile " + String.valueOf(selected_tile.getIndex()[0]) + " : " + String.valueOf(selected_tile.getIndex()[1]));
+                        System.out.println("Fired " + selected_missile_button.getMissileType().name() + " at tile " + selected_tile.getIndex()[0] + " : " + selected_tile.getIndex()[1]);
                         if (selected_missile_button.getMissileType() == MissileType.Normal) {
                             end_turn = true;
                             for (Boat boat: GameManager.getPlayer(opponent_id).getBoatConfig().boats) {
@@ -450,9 +406,7 @@ public class PlayState extends GameState {
                             // on each random tile in the later loop.
                             random_tiles[i].hit();
                         }
-                        for (Tile tile : random_tiles) {
-                            turn_tiles.add(tile);
-                        }
+                        turn_tiles.addAll(Arrays.asList(random_tiles));
                         // Check for a hit on any of the random tiles.
                         for (Boat boat: GameManager.getPlayer(opponent_id).getBoatConfig().boats) {
                             for (Tile boat_tile: boat.getTiles()) {

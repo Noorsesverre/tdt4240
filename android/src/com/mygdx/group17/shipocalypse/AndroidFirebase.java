@@ -6,10 +6,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.mygdx.group17.shipocalypse.controllers.GameState;
-import com.mygdx.group17.shipocalypse.controllers.PlayState;
 import com.mygdx.group17.shipocalypse.models.Game;
 import com.mygdx.group17.shipocalypse.models.Tile;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
@@ -22,19 +19,13 @@ import java.util.UUID;
 
 public class AndroidFirebase implements FirebaseInterface{
 
-    private FirebaseDatabase db;
+    private final FirebaseDatabase db;
 
     public AndroidFirebase() {
         String reference_url = "https://shipocalypse-tdt4240-default-rtdb.europe-west1.firebasedatabase.app/";
         db = FirebaseDatabase.getInstance(reference_url);
     }
-    @Override
-    public void writeToDatabase(String gameID, Map<String, Object> data) {
-        //DatabaseReference games = db.getReference("games");
-        // Get a reference to the document identified by gameID in a collection named "games"
-        // Set the data in Firestore document
-        //games.setValue("kai test");
-    }
+
     @Override
     public String createGame(HashMap<String, Object> options) {
         DatabaseReference games = db.getReference("active_games");
@@ -249,7 +240,7 @@ public class AndroidFirebase implements FirebaseInterface{
                 move_info.put("tile", tiles);
             }
         }
-        System.out.println(move_info.toString());
+        System.out.println(move_info);
         return move_info;
     }
     @Override

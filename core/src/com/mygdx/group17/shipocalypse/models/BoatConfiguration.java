@@ -17,13 +17,13 @@ public class BoatConfiguration {
     }
 
     public String debug() {
-        String debug_string = "";
+        StringBuilder debug_string = new StringBuilder();
         for (Boat boat : boats) {
-            debug_string = debug_string + "BOAT: \n";
-            debug_string = debug_string + "- size : " + boat.getSize() + "\n";
-            debug_string = debug_string + "- position : " + boat._posx + " - " + boat._posy + "\n";
+            debug_string.append("BOAT: \n");
+            debug_string.append("- size : ").append(boat.getSize()).append("\n");
+            debug_string.append("- position : ").append(boat._posx).append(" - ").append(boat._posy).append("\n");
         }
-        return debug_string;
+        return debug_string.toString();
     }
     public void RemoveBoat(Boat boat) {
         for (Tile tile : boat.getTiles()) {

@@ -1,11 +1,10 @@
 package com.mygdx.group17.shipocalypse.ui;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
 public class MissileButton extends Button {
 
-    private MissileType MissileType;
+    private final MissileType MissileType;
     public int id;
 
     private int ammunition;
@@ -71,12 +70,7 @@ public class MissileButton extends Button {
             default:
                 set_text(MissileType.name() + "\n(" + ammunition + ")");
                 break;
-        };
-    }
-
-    @Override
-    public void render() {
-        super.render();
+        }
     }
 
     @Override

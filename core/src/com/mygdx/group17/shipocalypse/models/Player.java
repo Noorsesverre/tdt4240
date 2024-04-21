@@ -1,12 +1,11 @@
 package com.mygdx.group17.shipocalypse.models;
 
 
-import java.util.Dictionary;
 import com.mygdx.group17.shipocalypse.models.BoatConfiguration;
 
 public class Player {
     private boolean defeated = false;
-    private Grid grid;
+    private final Grid grid;
     private BoatConfiguration boat_configuration;
     private String player_id;
     private boolean skipable_player;

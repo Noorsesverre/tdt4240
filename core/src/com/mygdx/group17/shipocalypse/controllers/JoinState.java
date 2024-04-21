@@ -17,12 +17,10 @@ public class JoinState extends GameState {
     HashMap<String, HashMap<String, Object>> open_game_id;
     MenuButton menu_button;
     ArrayList<MenuButton> menu_buttons;
-    private Texture title;
-    private ShapeRenderer shapeRenderer;
 
     public JoinState() {
-        this.title = new Texture("title.png");
-        this.shapeRenderer = AssetManager.getInstance().shape;
+        Texture title = new Texture("title.png");
+        ShapeRenderer shapeRenderer = AssetManager.getInstance().shape;
 
 
         open_game_id = GameManager.getOpenGames();

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface FirebaseInterface {
-    void writeToDatabase(String gameID, Map<String, Object> data);
 
     String createGame(HashMap<String, Object> options);
 

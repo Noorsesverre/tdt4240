@@ -2,22 +2,19 @@ package com.mygdx.group17.shipocalypse.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.group17.shipocalypse.models.Action;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 import com.mygdx.group17.shipocalypse.singletons.GameManager;
 
 public abstract class Button {
     public static final int BUTTON_WIDTH = 150;
 
-    private Vector3 _position;
+    private final Vector3 _position;
     private int width;
-    private int height;
-    private ShapeRenderer _shaperenderer;
+    private final int height;
+    private final ShapeRenderer _shaperenderer;
     private String _text;
 
     private int manual_text_offset_x = 0;
@@ -108,9 +105,7 @@ public abstract class Button {
             Vector3 projected_vector = AssetManager.unprojectInput(input_vector);
             Rectangle touch_rectangle = new Rectangle(projected_vector.x - 2, projected_vector.y - 2, 4, 4);
 
-            if (touch_rectangle.overlaps(this.get_rectangle())) {
-                return true;
-            }
+            return touch_rectangle.overlaps(this.get_rectangle());
         }
         return false;
     }
