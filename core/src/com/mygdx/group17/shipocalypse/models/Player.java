@@ -1,6 +1,9 @@
 package com.mygdx.group17.shipocalypse.models;
 
 
+import java.util.Dictionary;
+import java.util.Objects;
+
 import com.mygdx.group17.shipocalypse.models.BoatConfiguration;
 
 public class Player {
@@ -15,6 +18,8 @@ public class Player {
     public String getPlayer_id() {
         return player_id;
     }
+
+    public Missile chosen_missile;
 
     public Player(int gridSizeX, int gridSizeY, BoatConfiguration boats, String player_id) {
         this(gridSizeX,gridSizeY,boats,player_id,false);
@@ -83,5 +88,7 @@ public class Player {
         return grid.getSize();
     }
 
-
+    public Missile getChosenMissile() {
+        return chosen_missile;
+    }
 }

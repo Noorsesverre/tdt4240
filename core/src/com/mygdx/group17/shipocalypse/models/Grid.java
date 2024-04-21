@@ -1,6 +1,9 @@
 package com.mygdx.group17.shipocalypse.models;
 
 
+import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.group17.shipocalypse.singletons.GameManager;
+
 import java.util.ArrayList;
 
 public class Grid {
@@ -88,5 +91,30 @@ public class Grid {
         int random_x = (int) (Math.random() * getSize());
         int random_y = (int) (Math.random() * getSize());
         return _tiles[random_x][random_y];
+    }
+
+    public boolean isTileInGrid(Tile check_tile) {
+        if (check_tile == null) {
+            return false;
+        }
+        for (Tile[] tiles : _tiles) {
+            for (Tile tile : tiles) {
+                if (tile == check_tile) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Tile findTileRectOverlap(Rectangle touch_rectangle) {
+        for (Tile[] list : _tiles) {
+            for (Tile tile : list) {
+                if (touch_rectangle.overlaps(tile.get_rectangle())) {
+                    return tile;
+                }
+            }
+        }
+        return null;
     }
 }

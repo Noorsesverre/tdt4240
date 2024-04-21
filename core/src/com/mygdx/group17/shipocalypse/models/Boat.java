@@ -135,6 +135,9 @@ public class Boat {
             }
         }
         sunk = is_sunk;
+        if (sunk) {
+            show();
+        }
     }
     public void heal(Tile tile) {
         tile.removeBurning();
@@ -142,6 +145,9 @@ public class Boat {
         hits[tiles.indexOf(tile)] = false;
         sunk = false;
         display = false;
+    }
+    public boolean canHeal(Tile tile) {
+        return hits[tiles.indexOf(tile)];
     }
     public boolean[] getHits() { return hits; }
 
