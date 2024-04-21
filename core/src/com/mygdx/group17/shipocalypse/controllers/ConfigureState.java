@@ -170,7 +170,7 @@ public class ConfigureState extends GameState {
                                 tile.unAssign();
                             }
                             ArrayList<ArrayList<Tile>> placement_tiles = getPlacementTiles(boat.get_rectangle(selected_tile._posx, selected_tile._posy, true, origin), GameManager.getPlayer("1"));
-                            if (checkIfTilesAvailable(placement_tiles) && placement_tiles.size() == boat.getSize()) {
+                            if (checkIfTilesAvailable(placement_tiles) && placement_tiles.get(0).size() == boat.getSize()) {
                                 GameManager.getPlayer("1").getBoatConfig().RemoveBoat(boat);
                                 placeBoat(boat, placement_tiles.get(0), true, GameManager.getPlayer("1"));
                                 boat.addTiles(placement_tiles.get(0));

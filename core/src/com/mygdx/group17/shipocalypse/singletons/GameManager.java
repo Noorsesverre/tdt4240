@@ -150,8 +150,6 @@ public class GameManager {
         ScreenUtils.clear(0, 0, 0, 1);
         AssetManager.drawBackground();
 
-        // Print debug info to screen
-        AssetManager.write("Mouse location: {" + (Gdx.input.getX()) + ", " + (Options.GAME_HEIGHT - Gdx.input.getY()) + "}", 15,20);
         AssetManager.write("GAME ID: " + current_game_id, 15,40);
 
         // Ensures that a continuous touch will not be registered multiple times.
