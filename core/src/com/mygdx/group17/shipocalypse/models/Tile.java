@@ -58,9 +58,8 @@ public class Tile {
 
     public boolean isOccupied() { return occupied; }
 
-    public Tile assign() {
+    public void assign() {
         occupied = true;
-        return this;
     }
 
     public void unAssign() {

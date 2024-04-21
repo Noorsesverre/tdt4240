@@ -1,8 +1,7 @@
 package com.mygdx.group17.shipocalypse.models;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Objects;
 
 public class Game {
     public Player[] players;
@@ -23,7 +22,7 @@ public class Game {
     }
 
     public boolean hasTurn(String user_id) {
-        return users[player_turn] == user_id;
+        return Objects.equals(users[player_turn], user_id);
     }
 
     public boolean isJoinable() {

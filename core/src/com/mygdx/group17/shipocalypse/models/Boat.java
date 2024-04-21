@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Boat {
 
@@ -18,7 +17,7 @@ public class Boat {
     public int _boatSize;
     public boolean _isVertical = false;
     public Texture _texture;
-    private boolean[] hits;
+    private final boolean[] hits;
     private boolean sunk;
     private ArrayList<Tile> tiles;
 
@@ -136,6 +135,9 @@ public class Boat {
             }
         }
         sunk = is_sunk;
+        if (sunk) {
+            show();
+        }
     }
     public void heal(Tile tile) {
         tile.removeBurning();
@@ -143,6 +145,9 @@ public class Boat {
         hits[tiles.indexOf(tile)] = false;
         sunk = false;
         display = false;
+    }
+    public boolean canHeal(Tile tile) {
+        return hits[tiles.indexOf(tile)];
     }
     public boolean[] getHits() { return hits; }
 

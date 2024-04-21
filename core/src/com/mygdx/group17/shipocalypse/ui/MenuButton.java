@@ -4,14 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.group17.shipocalypse.Shipocalypse;
-import com.mygdx.group17.shipocalypse.models.Action;
-import com.mygdx.group17.shipocalypse.models.Options;
 import com.badlogic.gdx.graphics.Color;
 
 import com.mygdx.group17.shipocalypse.singletons.AssetManager;
-import com.mygdx.group17.shipocalypse.singletons.GameManager;
-import com.mygdx.group17.shipocalypse.models.State;
 
 public class MenuButton extends Button {
 
@@ -45,9 +40,7 @@ public class MenuButton extends Button {
             Vector3 projected_vector = AssetManager.unprojectInput(input_vector);
             Rectangle touch_rectangle = new Rectangle(projected_vector.x - 2, projected_vector.y - 2, 4, 4);
 
-            if (touch_rectangle.overlaps(this.get_rectangle())) {
-                return true;
-            }
+            return touch_rectangle.overlaps(this.get_rectangle());
         }
         return false;
     }

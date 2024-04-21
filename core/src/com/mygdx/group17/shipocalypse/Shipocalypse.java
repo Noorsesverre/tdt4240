@@ -3,7 +3,6 @@ package com.mygdx.group17.shipocalypse;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -15,7 +14,7 @@ public class Shipocalypse extends ApplicationAdapter {
 	OrthographicCamera camera;
 	private FitViewport viewport;
 	private Stage stage;
-	private FirebaseInterface firebaseInterface;
+	private final FirebaseInterface firebaseInterface;
 
 
 	public Shipocalypse(FirebaseInterface firebaseInterface) {
@@ -45,9 +44,5 @@ public class Shipocalypse extends ApplicationAdapter {
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height);
-	}
-	@Override
-	public void dispose () {
-
 	}
 }

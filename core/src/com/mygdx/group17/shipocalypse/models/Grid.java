@@ -1,11 +1,14 @@
 package com.mygdx.group17.shipocalypse.models;
 
 
+import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.group17.shipocalypse.singletons.GameManager;
+
 import java.util.ArrayList;
 
 public class Grid {
 
-    private Tile[][] _tiles;
+    private final Tile[][] _tiles;
     public int GRID_POS_X;
     public int GRID_POS_Y;
     public static final int GRID_GAP = 2;
@@ -20,11 +23,10 @@ public class Grid {
 
         for (int x = 0; x < sizeX; x++ )  {
             for (int y = 0; y < sizeY; y++) {
-                int x_gap = GRID_GAP, y_gap = GRID_GAP;
 
                 _tiles[x][y] = new Tile(
-                        GRID_POS_X + x * x_gap + x * Tile.TILE_SIZE,
-                        GRID_POS_Y + y * y_gap + y * Tile.TILE_SIZE,
+                        GRID_POS_X + x * GRID_GAP + x * Tile.TILE_SIZE,
+                        GRID_POS_Y + y * GRID_GAP + y * Tile.TILE_SIZE,
                         x,
                         y
                 );
@@ -62,9 +64,7 @@ public class Grid {
 
         tiles.add(center_tile);
 
-        for (Tile tile : center_tile.getAdjacentTiles()) {
-            tiles.add(tile);
-        }
+        tiles.addAll(center_tile.getAdjacentTiles());
 
         // NOTE: Lazy mans way of avoiding out of range index errors
         try {
@@ -91,5 +91,30 @@ public class Grid {
         int random_x = (int) (Math.random() * getSize());
         int random_y = (int) (Math.random() * getSize());
         return _tiles[random_x][random_y];
+    }
+
+    public boolean isTileInGrid(Tile check_tile) {
+        if (check_tile == null) {
+            return false;
+        }
+        for (Tile[] tiles : _tiles) {
+            for (Tile tile : tiles) {
+                if (tile == check_tile) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Tile findTileRectOverlap(Rectangle touch_rectangle) {
+        for (Tile[] list : _tiles) {
+            for (Tile tile : list) {
+                if (touch_rectangle.overlaps(tile.get_rectangle())) {
+                    return tile;
+                }
+            }
+        }
+        return null;
     }
 }

@@ -9,13 +9,13 @@ import com.mygdx.group17.shipocalypse.singletons.AssetManager;
 
 public class BoatButton extends Button {
 
-    private int max_allowed_boats;
-    private int boat_size;
-    private int x;
-    private int y;
+    private final int max_allowed_boats;
+    private final int boat_size;
+    private final int x;
+    private final int y;
     private boolean isVertical = false;
-    private Texture texture;
-    private Sprite sprite;
+    private final Texture texture;
+    private final Sprite sprite;
 
     public BoatButton(ShapeRenderer shape, int x, int y, int boat_size, int max_allowed_boats) {
         super(shape, x, y);

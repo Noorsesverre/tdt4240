@@ -1,6 +1,5 @@
 package com.mygdx.group17.shipocalypse.controllers;
 
-import com.mygdx.group17.shipocalypse.models.Action;
 import com.mygdx.group17.shipocalypse.models.Options;
 
 import com.mygdx.group17.shipocalypse.models.State;
